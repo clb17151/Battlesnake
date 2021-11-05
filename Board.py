@@ -1,8 +1,13 @@
 from typing import List, Dict
 
 gameBoard = []
+height = 0
+width = 0
 
 def initialiseBoard(boardWidth: int, boardHeight: int):
+  global height,width
+  width = boardWidth
+  height = boardHeight
   for i in range(boardWidth ):
       gameBoard.append([])
       for j in range(boardHeight ):
@@ -33,7 +38,7 @@ def nextState(snakes: List[Dict],myMoves: List[str]):
   possibleEnemeySnakeMoves = ["Left","Right","Up","Down"]
   boardCopy = gameBoard.copy()
   for snake in snakes:
-    simulateMoveForMe("Up",snake,boardCopy)
+    simulateMove("Up",snake,boardCopy)
     if snake["name"] == "ekans":
       """
       here we are going to deal with updating the board for my moves
@@ -44,9 +49,11 @@ def nextState(snakes: List[Dict],myMoves: List[str]):
       here we are going to deal with updating the board for enemey snake moves
       """
 
-def simulateMoveForMe(move: str,snake: List[Dict],board: List[str],boardHeight: int,boardWidth: int):
-  boardHeight -= 1
-  boardWidth -= 1
+def simulateMove(move: str,snake: List[Dict],board: List[str]):
+  global height,width
+
+  boardHeight = height - 1
+  boardWidth = width - 1
 
   headx = snake["head"]["x"]
   heady = snake["head"]["y"]
@@ -66,7 +73,6 @@ def simulateMoveForMe(move: str,snake: List[Dict],board: List[str],boardHeight: 
         return board
       else:
         return []
-
 
   if move == "down":
     if  board[(boardHeight - heady )][headx] == "f":
@@ -104,7 +110,6 @@ def simulateMoveForMe(move: str,snake: List[Dict],board: List[str],boardHeight: 
 
     if board[heady][headx + 1] == "f":
           consumedFood = True
-
     if not consumedFood:
       board[(boardHeight  - tail["y"])][tail["x"]] = "x"
       board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"

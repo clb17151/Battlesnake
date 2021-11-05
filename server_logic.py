@@ -1,5 +1,5 @@
-import random, RouteFinder, Board
-from typing import List, Dict
+import random, RouteFinder, Board,moveLogic
+from typing import Dict
 """
 This file can be a nice home for your move logic, and to write helper functions.
 
@@ -7,38 +7,6 @@ We have started this for you, with a function to help remove the 'neck' directio
 from the list of possible moves!
 """
 
-
-def avoid_other_snakes(my_head: Dict[str, int], enemy_snake: List[dict],
-                       possible_moves: List[str]):
-    for s in enemy_snake:
-        current_snake = s["body"][:-1]
-        for snake_body in current_snake:
-            if my_head["x"] == snake_body["x"] + 1 and my_head[
-                    "y"] == snake_body["y"] and "left" in possible_moves:
-                possible_moves.remove("left")
-            elif my_head["x"] == snake_body["x"] - 1 and my_head[
-                    "y"] == snake_body["y"] and "right" in possible_moves:
-                possible_moves.remove("right")
-            elif my_head["y"] == snake_body["y"] + 1 and my_head[
-                    "x"] == snake_body["x"] and "down" in possible_moves:
-                possible_moves.remove("down")
-            elif my_head["y"] == snake_body["y"] - 1 and my_head[
-                    "x"] == snake_body["x"] and "up" in possible_moves:
-                possible_moves.remove("up")
-    return possible_moves
-
-
-def avoid_walls(my_head: Dict[str, int], width: int, height: int,
-                possible_moves: List[str]):
-    if my_head["x"] == width - 1 and "right" in possible_moves:
-        possible_moves.remove("right")
-    if my_head["x"] == 0 and "left" in possible_moves:
-        possible_moves.remove("left")
-    if my_head["y"] == 0 and "down" in possible_moves:
-        possible_moves.remove("down")
-    if my_head["y"] == height - 1 and "up" in possible_moves:
-        possible_moves.remove("up")
-    return possible_moves
 
 
 def getMove(head: Dict[str, int], coOrd: Dict[str, int]):
@@ -66,8 +34,8 @@ def choose_move(data: dict) -> str:
 
     food = RouteFinder.findClosestFood(food, my_head)
     possible_moves = ["up", "down", "left", "right"]
-    possible_moves = avoid_other_snakes(my_head, snakes, possible_moves)
-    possible_moves = avoid_walls(my_head, width, height, possible_moves)
+    possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
+    possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
     path = RouteFinder.bfsForFood(food, my_head, possible_moves)
 
     if path != []:
