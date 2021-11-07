@@ -9,6 +9,8 @@ def expectiminimax(board: List[str],depth: int,possibleMoves: List[str],snake: L
 
   if depth == 0 :
     return bestMove,evaluate(board)
+
+  #Dont think board == [] should be here as wouldnt represent win / loss
   elif possibleMoves == [] or board == []:
     return bestMove,0
   else:
