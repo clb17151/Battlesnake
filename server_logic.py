@@ -29,6 +29,10 @@ def choose_move(data: dict) -> str:
     food = data["board"]["food"]
     my_head = data["you"]["head"]
 
+    for snake in snakes:
+      if snake["id"] == data["you"]["id"]:
+        mySnake = snake
+
     Board.initialiseBoard(width, height)
     Board.fillGameBoard(snakes, food, height)
 
@@ -44,8 +48,18 @@ def choose_move(data: dict) -> str:
             move = random.choice(possible_moves)
         if move == "left":
           print(Board.floodFill(Board.getBoard(),my_head["x"]-1,my_head["y"],data["you"]["body"]))
+        if not "right" in possible_moves:
+          copy = Board.simulateMove("right",mySnake,Board.getBoard())
+          if copy == []:
+            print ("Bingo at path finding")
     else:
         move = random.choice(possible_moves)
+        if move == "left":
+          print(Board.floodFill(Board.getBoard(),my_head["x"]-1,my_head["y"],data["you"]["body"]))
+        if not "right" in possible_moves:
+          copy = Board.simulateMove("right",mySnake,Board.getBoard())
+          if copy == []:
+            print ("Bingo at random")
  
    
 

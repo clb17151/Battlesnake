@@ -53,7 +53,7 @@ def simulateMove(move: str,snake: List[Dict],board: List[str]):
       board[(boardHeight  - tail["y"])][tail["x"]] = "x"
       board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
       board[boardHeight - heady  ][headx] = "sb"
-      if not heady == boardHeight:
+      if not heady == boardHeight and (not board[(boardHeight - (heady+1))][headx] == "sb") and (not board[(boardHeight - (heady+1))][headx] == "sh"):
         board[(boardHeight - (heady + 1))][headx] = "sh"
         return board
       else:
@@ -67,7 +67,7 @@ def simulateMove(move: str,snake: List[Dict],board: List[str]):
       board[(boardHeight  - tail["y"])][tail["x"]] = "x"
       board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
       board[(boardHeight - heady)][headx] = "sb"
-      if not heady == 0:
+      if not heady == 0 and (not board[(boardHeight - (heady-1))][headx] == "sb") and (not board[(boardHeight - (heady-1))][headx] == "sh"):
         board[(boardHeight - (heady - 1))][headx] = "sh"
         return board
       else:
@@ -77,34 +77,39 @@ def simulateMove(move: str,snake: List[Dict],board: List[str]):
 
   if move == "left":
 
-    if board[heady][headx - 1] == "f":
-      consumedFood = True
+    if not headx == 0:
+      if board[heady][headx - 1] == "f":
+        consumedFood = True
 
-    if not consumedFood:
+    if not consumedFood and not headx == 0:
       board[(boardHeight  - tail["y"])][tail["x"]] = "x"
       board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
       board[heady][headx-1] = "sh"
       board[heady][headx] = "sb"
     
-    if not headx == 0:
-      board[(boardHeight - heady)][headx - 1] = "sh"
+      if not headx == 0 and (not board[(boardHeight - (heady))][headx-1] == "sb") and (not board[(boardHeight - (heady))][headx - 1] == "sh"):
+        board[(boardHeight - heady)][headx - 1] = "sh"
       return board
     else:
       return []
+
+
   if move == "right":
 
-    if board[heady][headx + 1] == "f":
-          consumedFood = True
-    if not consumedFood:
+    if not headx == boardWidth:
+      if board[heady][headx + 1] == "f":
+        consumedFood = True
+
+    if not consumedFood and not headx == boardWidth:
       board[(boardHeight  - tail["y"])][tail["x"]] = "x"
       board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
       board[heady][headx+1] = "sh"
       board[heady][headx] = "sb"
-      if not headx == boardWidth:
+      if not headx == boardWidth and (not board[(boardHeight - (heady))][headx+1] == "sb") and (not board[(boardHeight - (heady))][headx + 1] == "sh"):
         board[(boardHeight - heady)][headx + 1] = "sh"
         return board
-      else:
-        return []    
+    else:
+      return []    
   
 
 def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
@@ -120,7 +125,6 @@ def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
           length = len(board)
       else:
         length = len(board) - 1
-      print(n)
       if board[(length-n[0])][n[1]] == "x" or board[(length-n[0])][n[1]] == "f":  
         area += 1
         if n[1] != length and not [n[0],n[1]+1] in visited:
