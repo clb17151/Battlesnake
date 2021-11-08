@@ -42,13 +42,12 @@ def choose_move(data: dict) -> str:
         move = getMove(my_head, path[1])
         if (not move in possible_moves):
             move = random.choice(possible_moves)
+        if move == "left":
+          print(Board.floodFill(Board.getBoard(),my_head["x"]-1,my_head["y"],data["you"]["body"]))
     else:
         move = random.choice(possible_moves)
-    """gmBoardCopy = Board.getBoard()
-    newBoard = gmBoardCopy[:]
-    print(gmBoardCopy)
-    newBoard = (Board.simulateMoveForMe(random.choice(possible_moves),snakes[0],newBoard,height,width))
-    print(newBoard)"""
+ 
+   
 
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"

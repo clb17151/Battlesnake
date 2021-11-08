@@ -34,21 +34,6 @@ def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
     gameBoard[foody][foodx] = "f"
 
 
-def nextState(snakes: List[Dict],myMoves: List[str]):
-  possibleEnemeySnakeMoves = ["Left","Right","Up","Down"]
-  boardCopy = gameBoard.copy()
-  for snake in snakes:
-    simulateMove("Up",snake,boardCopy)
-    if snake["name"] == "ekans":
-      """
-      here we are going to deal with updating the board for my moves
-      """
-
-    else:
-      """
-      here we are going to deal with updating the board for enemey snake moves
-      """
-
 def simulateMove(move: str,snake: List[Dict],board: List[str]):
   global height,width
 
@@ -121,6 +106,32 @@ def simulateMove(move: str,snake: List[Dict],board: List[str]):
       else:
         return []    
   
+
+def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
+
+  area = 0
+  queue = [[ycord,xcord]]
+  visited = []
+  while queue:
+    n = queue.pop()
+    if n not in visited:
+      visited.append(n)
+      if n[0] == len(board) or n[1] == len(board):
+          length = len(board)
+      else:
+        length = len(board) - 1
+      print(n)
+      if board[(length-n[0])][n[1]] == "x" or board[(length-n[0])][n[1]] == "f":  
+        area += 1
+        if n[1] != length and not [n[0],n[1]+1] in visited:
+          queue.append([n[0],n[1] + 1])
+        if n[1] != 0 and not [n[0],n[1]-1] in visited :
+          queue.append([n[0],n[1] - 1])
+        if n[0] != length and not [n[0] + 1,n[1]] in visited :
+          queue.append([n[0] + 1,n[1]])
+        if n[0] != 0 and not [n[0] - 1,n[1]] in visited  :
+          queue.append([n[0] - 1,n[1]])
+  return area
 
 def resetGameBoard():
   global gameBoard
