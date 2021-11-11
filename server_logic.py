@@ -1,4 +1,4 @@
-import random, RouteFinder, Board,moveLogic
+import random, RouteFinder, Board,moveLogic, maxN
 from typing import Dict
 """
 This file can be a nice home for your move logic, and to write helper functions.
@@ -36,6 +36,7 @@ def choose_move(data: dict) -> str:
     Board.initialiseBoard(width, height)
     Board.fillGameBoard(snakes, food, height)
 
+
     food = RouteFinder.findClosestFood(food, my_head)
     possible_moves = ["up", "down", "left", "right"]
     possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
@@ -46,23 +47,19 @@ def choose_move(data: dict) -> str:
         move = getMove(my_head, path[1])
         if (not move in possible_moves):
             move = random.choice(possible_moves)
-        if move == "left":
-          print(Board.floodFill(Board.getBoard(),my_head["x"]-1,my_head["y"],data["you"]["body"]))
-        if not "right" in possible_moves:
-          copy = Board.simulateMove("right",mySnake,Board.getBoard())
-          if copy == []:
-            print ("Bingo at path finding")
+        index = 0
+        for s in snakes:
+          if s["id"] == data["you"]["id"]:
+            snakes.pop(index)
+          index += 1       
+        snakes.insert(0,mySnake)
+        boardCopy = Board.getBoard()[:]
+        print (maxN.maxn(boardCopy,2,snakes,0))
+        
     else:
         move = random.choice(possible_moves)
-        if move == "left":
-          print(Board.floodFill(Board.getBoard(),my_head["x"]-1,my_head["y"],data["you"]["body"]))
-        if not "right" in possible_moves:
-          copy = Board.simulateMove("right",mySnake,Board.getBoard())
-          if copy == []:
-            print ("Bingo at random")
+        
  
-   
-
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"
     )

@@ -143,3 +143,11 @@ def resetGameBoard():
 
 def getBoard():
   return gameBoard.copy()
+
+def getHeight():
+  global width
+  return height
+
+def getWidth():
+  global width
+  return width
