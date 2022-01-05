@@ -1,11 +1,5 @@
 import random, RouteFinder, Board,moveLogic, maxN
 from typing import Dict
-"""
-This file can be a nice home for your move logic, and to write helper functions.
-
-We have started this for you, with a function to help remove the 'neck' direction
-from the list of possible moves!
-"""
 
 
 
@@ -43,18 +37,21 @@ def choose_move(data: dict) -> str:
     possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
     path = RouteFinder.bfsForFood(food, my_head, possible_moves)
 
+    index = 0
+    for s in snakes:
+      if s["id"] == data["you"]["id"]:
+        snakes.pop(index)
+      index += 1       
+    snakes.insert(0,mySnake)
+    boardCopy = Board.getBoard()[:]
+    print("At Maxn")
+    print (maxN.maxn(boardCopy,2,snakes,0))
+
     if path != []:
         move = getMove(my_head, path[1])
         if (not move in possible_moves):
             move = random.choice(possible_moves)
-        index = 0
-        for s in snakes:
-          if s["id"] == data["you"]["id"]:
-            snakes.pop(index)
-          index += 1       
-        snakes.insert(0,mySnake)
-        boardCopy = Board.getBoard()[:]
-        print (maxN.maxn(boardCopy,2,snakes,0))
+
         
     else:
         move = random.choice(possible_moves)

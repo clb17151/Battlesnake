@@ -1,4 +1,5 @@
 from typing import List, Dict
+import copy
 
 gameBoard = []
 height = 0
@@ -34,83 +35,99 @@ def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
     gameBoard[foody][foodx] = "f"
 
 
-def simulateMove(move: str,snake: List[Dict],board: List[str]):
+
+def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
   global height,width
+  gameBoard = board[:]
 
-  boardHeight = height - 1
-  boardWidth = width - 1
+  index = 0
+  for m in moves:
+    consumedFood = False
+    snakeIndexAtCollision = -1
 
-  headx = snake["head"]["x"]
-  heady = snake["head"]["y"]
-  tail = snake["body"][-1]
-  secondLast = snake["body"][-2]
-  consumedFood = False
-  if move == "up":
-    if  board[(boardHeight  - heady )][headx] == "f":
-      consumedFood = True
-    
-    if not consumedFood:
-      board[(boardHeight  - tail["y"])][tail["x"]] = "x"
-      board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
-      board[boardHeight - heady  ][headx] = "sb"
-      if not heady == boardHeight and (not board[(boardHeight - (heady+1))][headx] == "sb") and (not board[(boardHeight - (heady+1))][headx] == "sh"):
-        board[(boardHeight - (heady + 1))][headx] = "sh"
-        return board
+    currentSnake = snakes[index]
+    tail = currentSnake["body"][-1]
+    secondLast = currentSnake["body"][-2]
+    headx = currentSnake["head"]["x"]
+    heady = currentSnake["head"]["y"]
+    #print("Movelist: ",moves)
+    #print("Printing at move: ",m)
+    #print(currentSnake)
+
+    if m == "up":
+      if not heady == height - 1:
+          if gameBoard[(height  - heady )-1][headx] == "f":
+            consumedFood = True
+          if not consumedFood:
+            gameBoard[((height  - tail["y"]) - 1)][tail["x"]] = "x"
+            gameBoard[(height  - secondLast["y"]) - 1][secondLast["x"]] = "st"
+            gameBoard[(height - heady) - 1 ][headx] = "sb"
+          if (not heady == (height - 1)) and (not gameBoard[((height - heady) - 1)][headx] == "sb") and (not gameBoard[(height - heady - 1)][headx] == "sh"):
+            gameBoard[(height - heady) - 1 ][headx] = "sh"
+          else:
+            gameBoard[(height - heady) - 2][headx] = "sh"
+            snakeIndexAtCollision = index
+
+
+    if m == "down":
+      if not heady == 0:
+        if  gameBoard[(height - (heady) )][headx] == "f":
+          consumedFood = True
+        
+        if not consumedFood and not heady == 0:
+          gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+          gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+          gameBoard[(height - heady) - 1][headx] = "sb"
+        if not heady == 0 and (not gameBoard[(height - (heady))][headx] == "sb") and (not gameBoard[(height - (heady))][headx] == "sh"):
+          gameBoard[(height - heady)][headx] = "sh"
+        else:
+          gameBoard[(height - heady)][headx] = "sh"
+          snakeIndexAtCollision = index
+
+
+    if m == "left":
+
+      if not headx == 0:
+        if gameBoard[heady][headx - 1] == "f":
+          consumedFood = True
+
+      if not consumedFood and not headx == 0:
+        gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+        gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+        gameBoard[((height - heady) -1)][headx-1] = "sh"
+        gameBoard[((height - heady) -1)][headx] = "sb"
+      
+      if not headx == 0 and (not gameBoard[(height - (heady))-1][headx-1] == "sb") and (not gameBoard[(height - (heady))-1][headx - 1] == "sh"):
+        gameBoard[(height - heady)-1][headx - 1] = "sh"
       else:
-        return []
+        gameBoard[(height - heady)-1][headx - 1] = "sh"
+        snakeIndexAtCollision = index
 
-  if move == "down":
-    if  board[(boardHeight - heady )][headx] == "f":
-      consumedFood = True
-    
-    if not consumedFood:
-      board[(boardHeight  - tail["y"])][tail["x"]] = "x"
-      board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
-      board[(boardHeight - heady)][headx] = "sb"
-      if not heady == 0 and (not board[(boardHeight - (heady-1))][headx] == "sb") and (not board[(boardHeight - (heady-1))][headx] == "sh"):
-        board[(boardHeight - (heady - 1))][headx] = "sh"
-        return board
+
+
+    if m == "right":
+
+      if not headx == width - 1:
+        if gameBoard[heady][headx + 1] == "f":
+          gameBoard = True
+
+      if not consumedFood and not headx == width - 1:
+        gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+        gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+        gameBoard[((height - heady) -1)][headx+1] = "sh"
+        gameBoard[((height - heady) -1)][headx] = "sb"
+      if not headx == width - 1 and (not gameBoard[(height - (heady))-1][headx+1] == "sb") and (not gameBoard[(height - (heady))-1][headx + 1] == "sh"):
+        gameBoard[(height - heady)-1][headx + 1] = "sh"
       else:
-        return []
-
-    return board
-
-  if move == "left":
-
-    if not headx == 0:
-      if board[heady][headx - 1] == "f":
-        consumedFood = True
-
-    if not consumedFood and not headx == 0:
-      board[(boardHeight  - tail["y"])][tail["x"]] = "x"
-      board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
-      board[heady][headx-1] = "sh"
-      board[heady][headx] = "sb"
-    
-      if not headx == 0 and (not board[(boardHeight - (heady))][headx-1] == "sb") and (not board[(boardHeight - (heady))][headx - 1] == "sh"):
-        board[(boardHeight - heady)][headx - 1] = "sh"
-      return board
-    else:
-      return []
+        gameBoard[(height - heady)-1][headx + 1] = "sh"
+        snakeIndexAtCollision = index
 
 
-  if move == "right":
 
-    if not headx == boardWidth:
-      if board[heady][headx + 1] == "f":
-        consumedFood = True
+    index += 1
+    #print(gameBoard)
+  return gameBoard,snakeIndexAtCollision
 
-    if not consumedFood and not headx == boardWidth:
-      board[(boardHeight  - tail["y"])][tail["x"]] = "x"
-      board[(boardHeight  - secondLast["y"])][secondLast["x"]] = "st"
-      board[heady][headx+1] = "sh"
-      board[heady][headx] = "sb"
-      if not headx == boardWidth and (not board[(boardHeight - (heady))][headx+1] == "sb") and (not board[(boardHeight - (heady))][headx + 1] == "sh"):
-        board[(boardHeight - heady)][headx + 1] = "sh"
-        return board
-    else:
-      return []    
-  
 
 def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
 
@@ -142,7 +159,7 @@ def resetGameBoard():
   gameBoard = []
 
 def getBoard():
-  return gameBoard.copy()
+  return gameBoard
 
 def getHeight():
   global width
@@ -151,3 +168,7 @@ def getHeight():
 def getWidth():
   global width
   return width
+
+def setBoard(board:List[str]):
+  global gameBoard
+  gameBoard = copy.deepcopy(board)

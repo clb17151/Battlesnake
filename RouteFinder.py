@@ -71,4 +71,3 @@ def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List
           queue.append(newList)
   return []    
 
-
