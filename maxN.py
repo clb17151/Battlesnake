@@ -4,37 +4,35 @@ from typing import List, Dict
 
 def maxn(board:List[str], depth:int,snakes: List[Dict],snakeIndex: int ):
  
-  if snakeIndex == 3:
-    snakeIndex = -1
+  if snakeIndex == len(snakes)-1:
+    snakeIndex = 0
     depth -= 1
 
-  if depth == 0:
+  if depth == 0 or len(snakes) <= 1:
     return evaluate(board,snakes)
 
   possibleMoves = nextPossibleMoves(board,snakes)
 
-  bestScore = 0
   childNodes = []
   oldBoard = copy.deepcopy(Board.getBoard())
 
   for moves in possibleMoves:
     Board.setBoard(oldBoard)
-    newBoard = Board.getBoard()[:]
-    newBoard = Board.simulateMoves(moves,snakes,newBoard)
-    #remember this returns a tuple of board,collisionindex
+    newBoard = copy.deepcopy(Board.getBoard())
+    newBoard,moveSet = Board.simulateMoves(moves,snakes,newBoard)
     childNodes.append(newBoard)
-  
-  
-  
-  return 0
-"""
-  for child in childNodes:
+
+
+  best = maxn(childNodes[0],depth,snakes,snakeIndex+1)
+
+  for child in childNodes[1:]:
    
-    evals = maxn(child,depth,snakes,snakeIndex+1)
-    if evals[snakeIndex] > bestScore:
-      bestVector = evals
-      bestScore = evals[snakeIndex]
-  """
+    current = maxn(child,depth,snakes,snakeIndex+1)
+    if current[snakeIndex] > best[snakeIndex]:
+      best = current 
+
+
+  return best
 
 
       
@@ -55,13 +53,14 @@ def nextPossibleMoves(board: List[str],snakes:List[Dict]):
   elif len(snakes) == 2:
     moveTuples = [x for x in  itertools.product(moveList[0],moveList[1])]
   
-  branchFactor = 0
-  for m in moveTuples:
-    branchFactor += 1  
   return moveTuples
 
 def evaluate(board: List[str],snakes: List[Dict]):
-  return [5,5,5,5]
+
+
+  for s in snakes:
+    floodfillScore = Board.floodFill(board,s["head"]["x"],s["head"]["y"],s)
+  return [5,5]
 
 
 

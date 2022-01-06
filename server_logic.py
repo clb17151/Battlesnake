@@ -43,9 +43,11 @@ def choose_move(data: dict) -> str:
         snakes.pop(index)
       index += 1       
     snakes.insert(0,mySnake)
+    
     boardCopy = Board.getBoard()[:]
-    print("At Maxn")
-    print (maxN.maxn(boardCopy,2,snakes,0))
+    #print("At Maxn")
+    if data["turn"] > 5:
+      print (maxN.maxn(boardCopy,2,snakes,0))
 
     if path != []:
         move = getMove(my_head, path[1])
@@ -55,8 +57,7 @@ def choose_move(data: dict) -> str:
         
     else:
         move = random.choice(possible_moves)
-        
- 
+         
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"
     )

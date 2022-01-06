@@ -36,20 +36,19 @@ def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
 
 
 
-def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
+def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
   global height,width
-  gameBoard = board[:]
+  gameBoard = copy.deepcopy(board)
   index = 0
   for m in moves:
     consumedFood = False
-    snakeIndexAtCollision = -1
 
     currentSnake = snakes[index]
     tail = currentSnake["body"][-1]
     secondLast = currentSnake["body"][-2]
     headx = currentSnake["head"]["x"]
     heady = currentSnake["head"]["y"]
-    print("Movelist: ",moves)
+    #print("Movelist: ",moves)
     #print("Printing at move: ",m)
     #print(currentSnake)
 
@@ -63,6 +62,7 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
             gameBoard[(height - heady) - 1 ][headx] = "sb"
           if (not heady == (height - 1)):
             gameBoard[(height - heady) - 2 ][headx] = "sh"
+      updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
 
     if m == "down":
@@ -76,6 +76,8 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
           gameBoard[(height - heady) - 1][headx] = "sb"
         if not heady == 0:
           gameBoard[(height - heady)][headx] = "sh"
+
+      updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
     if m == "left":
 
@@ -92,6 +94,9 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
       if not headx == 0:
         gameBoard[(height - heady)-1][headx - 1] = "sh"
 
+      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+
+
     if m == "right":
 
       if not headx == width - 1:
@@ -106,34 +111,95 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
       if not headx == width - 1:
         gameBoard[(height - heady)-1][headx + 1] = "sh"
 
-    prettyPrint(gameBoard)
+      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+
+
+    #prettyPrint(gameBoard)
     index += 1
-  return gameBoard,snakeIndexAtCollision
+  return gameBoard,moves
+
+def updateSnakes(board:List[str],snakes:List[Dict],move:str,index:int,consumedFood:bool):
+
+  prettyPrint(board)
+  updatedSnakes = snakes[:]
+  currentSnake = copy.deepcopy(snakes[index])
+  updatedSnakes.pop(index)
+  secondLast = currentSnake["body"][-2]
+  headx = currentSnake["head"]["x"]
+  heady = currentSnake["head"]["y"]
+  if move == "up":
+      newHead = {"x":headx,"y":heady+1}
+
+  if move == "down":
+      newHead = {"x":headx,"y":heady-1}
+
+  if move == "left":
+    newHead = {"x":headx - 1,"y":heady}
+
+  if move == "right":
+    newHead = {"x":headx + 1, "y":heady}
+
+  if not consumedFood:
+    currentSnake["head"] = newHead
+    currentSnake["body"].insert(0,newHead)
+    currentSnake["body"].pop(-1)
+
+    
+  else: 
+    currentSnake["head"] = newHead
+    currentSnake["body"].insert(0,newHead)
+    currentSnake["body"].pop(-1)
+    currentSnake["body"].insert(-1,secondLast)
+  
+  length = len(currentSnake["body"])
+  currentSnake["length"] = length
+  
+  updatedSnakes.insert(index,currentSnake)
+
+  return updatedSnakes
+    
+
+
 
 
 def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
 
   area = 0
-  queue = [[ycord,xcord]]
+  length = len(board)
+  queue = []
+  if ycord != (length - 1):
+    queue.append([ycord+1,xcord])
+  if ycord == 0:
+    queue.append([ycord-1,xcord])
+  if xcord != (length - 1):
+    queue.append([ycord,xcord+1])
+  if xcord != 0:
+    queue.append([ycord,xcord-1])
+
   visited = []
   while queue:
     n = queue.pop()
     if n not in visited:
       visited.append(n)
-      if n[0] == len(board) or n[1] == len(board):
-          length = len(board)
-      else:
-        length = len(board) - 1
-      if board[(length-n[0])][n[1]] == "x" or board[(length-n[0])][n[1]] == "f":  
+      if board[((length-n[0]) - 1)][n[1]] == "x" or board[((length-n[0]) - 1)][n[1]] == "f":  
         area += 1
-        if n[1] != length and not [n[0],n[1]+1] in visited:
-          queue.append([n[0],n[1] + 1])
-        if n[1] != 0 and not [n[0],n[1]-1] in visited :
-          queue.append([n[0],n[1] - 1])
-        if n[0] != length and not [n[0] + 1,n[1]] in visited :
-          queue.append([n[0] + 1,n[1]])
-        if n[0] != 0 and not [n[0] - 1,n[1]] in visited  :
-          queue.append([n[0] - 1,n[1]])
+
+      #Deals with adding Right square
+      if n[1] != (length - 1) and not [n[0],n[1]+1] in visited and (board[((length-n[0]) - 1)][n[1]+1] == "x" or board[((length-n[0]) - 1)][n[1]+1] == "f"):
+        queue.append([n[0],n[1] + 1])
+
+      #Deals with adding Left square
+      if n[1] != 0 and not [n[0],n[1]-1] in visited and (board[((length-n[0]) - 1)][n[1]-1] == "x" or board[((length-n[0]) - 1)][n[1]-1] == "f"):
+        queue.append([n[0],n[1] - 1])
+
+      #Deals with adding Up square
+      if n[0] != (length - 1) and not [n[0] + 1,n[1]] in visited and (board[((length-n[0]) - 1)][n[1]] == "x" or board[((length-n[0]) - 1)][n[1]] == "f"):
+        queue.append([n[0] + 1,n[1]])
+
+      #Deals with adding Down square
+      if n[0] != 0 and not [n[0] - 1,n[1]] in visited and (board[((length-n[0]) - 1)][n[1]] == "x" or board[((length-n[0]) - 1)][n[1]] == "f"):
+        queue.append([n[0] - 1,n[1]])
+
   return area
 
 def resetGameBoard():
