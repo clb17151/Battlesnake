@@ -39,7 +39,6 @@ def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
 def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
   global height,width
   gameBoard = board[:]
-
   index = 0
   for m in moves:
     consumedFood = False
@@ -50,7 +49,7 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
     secondLast = currentSnake["body"][-2]
     headx = currentSnake["head"]["x"]
     heady = currentSnake["head"]["y"]
-    #print("Movelist: ",moves)
+    print("Movelist: ",moves)
     #print("Printing at move: ",m)
     #print(currentSnake)
 
@@ -62,11 +61,8 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
             gameBoard[((height  - tail["y"]) - 1)][tail["x"]] = "x"
             gameBoard[(height  - secondLast["y"]) - 1][secondLast["x"]] = "st"
             gameBoard[(height - heady) - 1 ][headx] = "sb"
-          if (not heady == (height - 1)) and (not gameBoard[((height - heady) - 1)][headx] == "sb") and (not gameBoard[(height - heady - 1)][headx] == "sh"):
-            gameBoard[(height - heady) - 1 ][headx] = "sh"
-          else:
-            gameBoard[(height - heady) - 2][headx] = "sh"
-            snakeIndexAtCollision = index
+          if (not heady == (height - 1)):
+            gameBoard[(height - heady) - 2 ][headx] = "sh"
 
 
     if m == "down":
@@ -78,12 +74,8 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
           gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
           gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
           gameBoard[(height - heady) - 1][headx] = "sb"
-        if not heady == 0 and (not gameBoard[(height - (heady))][headx] == "sb") and (not gameBoard[(height - (heady))][headx] == "sh"):
+        if not heady == 0:
           gameBoard[(height - heady)][headx] = "sh"
-        else:
-          gameBoard[(height - heady)][headx] = "sh"
-          snakeIndexAtCollision = index
-
 
     if m == "left":
 
@@ -97,35 +89,25 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[Dict]):
         gameBoard[((height - heady) -1)][headx-1] = "sh"
         gameBoard[((height - heady) -1)][headx] = "sb"
       
-      if not headx == 0 and (not gameBoard[(height - (heady))-1][headx-1] == "sb") and (not gameBoard[(height - (heady))-1][headx - 1] == "sh"):
+      if not headx == 0:
         gameBoard[(height - heady)-1][headx - 1] = "sh"
-      else:
-        gameBoard[(height - heady)-1][headx - 1] = "sh"
-        snakeIndexAtCollision = index
-
-
 
     if m == "right":
 
       if not headx == width - 1:
         if gameBoard[heady][headx + 1] == "f":
-          gameBoard = True
+          consumedFood = True
 
       if not consumedFood and not headx == width - 1:
         gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
         gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
         gameBoard[((height - heady) -1)][headx+1] = "sh"
         gameBoard[((height - heady) -1)][headx] = "sb"
-      if not headx == width - 1 and (not gameBoard[(height - (heady))-1][headx+1] == "sb") and (not gameBoard[(height - (heady))-1][headx + 1] == "sh"):
+      if not headx == width - 1:
         gameBoard[(height - heady)-1][headx + 1] = "sh"
-      else:
-        gameBoard[(height - heady)-1][headx + 1] = "sh"
-        snakeIndexAtCollision = index
 
-
-
+    prettyPrint(gameBoard)
     index += 1
-    #print(gameBoard)
   return gameBoard,snakeIndexAtCollision
 
 
@@ -172,3 +154,19 @@ def getWidth():
 def setBoard(board:List[str]):
   global gameBoard
   gameBoard = copy.deepcopy(board)
+
+def prettyPrint(board:List[str]):
+  print("\n")
+  for r in board:
+    print(r)
+    
+def printToFile(board:List[str]):
+  #Placeholder
+  f = open("prettyPrint.txt", "a")
+  f.write("\n")
+  for r in board:
+    f.write("\n")
+    for k in r:
+      f.write(k)
+
+  f.close()   

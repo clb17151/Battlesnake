@@ -21,12 +21,13 @@ def maxn(board:List[str], depth:int,snakes: List[Dict],snakeIndex: int ):
     Board.setBoard(oldBoard)
     newBoard = Board.getBoard()[:]
     newBoard = Board.simulateMoves(moves,snakes,newBoard)
+    #remember this returns a tuple of board,collisionindex
     childNodes.append(newBoard)
-
-  for c in childNodes:
-    print(c)      
-      
-  """
+  
+  
+  
+  return 0
+"""
   for child in childNodes:
    
     evals = maxn(child,depth,snakes,snakeIndex+1)
@@ -35,7 +36,7 @@ def maxn(board:List[str], depth:int,snakes: List[Dict],snakeIndex: int ):
       bestScore = evals[snakeIndex]
   """
 
-  return 0
+
       
       
 
@@ -56,10 +57,7 @@ def nextPossibleMoves(board: List[str],snakes:List[Dict]):
   
   branchFactor = 0
   for m in moveTuples:
-    branchFactor += 1
-
-  print (branchFactor)
-  
+    branchFactor += 1  
   return moveTuples
 
 def evaluate(board: List[str],snakes: List[Dict]):
