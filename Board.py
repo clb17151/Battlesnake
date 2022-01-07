@@ -1,11 +1,11 @@
 from typing import List, Dict
 import copy
 
-gameBoard = []
 height = 0
 width = 0
 
 def initialiseBoard(boardWidth: int, boardHeight: int):
+  gameBoard = []
   global height,width
   width = boardWidth
   height = boardHeight
@@ -13,26 +13,29 @@ def initialiseBoard(boardWidth: int, boardHeight: int):
       gameBoard.append([])
       for j in range(boardHeight ):
         gameBoard[i].append("x")
+  
+  return gameBoard
 
 
-def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
-  global gameBoard
+def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int,board:List[str]):
+ 
   
   for snake in snakes:
       headx = (snake["head"]["x"]) 
       heady = (boardHeight - 1) - (snake["head"]["y"]) 
-      gameBoard[heady][headx] = "sh"
+      board[heady][headx] = "sh"
       for bodyPiece in snake["body"][1:]:
           bodyx = bodyPiece["x"] 
           bodyy = (boardHeight - 1) - bodyPiece["y"] 
-          if gameBoard[bodyy][bodyx] == "x":
-              gameBoard[bodyy][bodyx] = "sb"
+          if board[bodyy][bodyx] == "x":
+              board[bodyy][bodyx] = "sb"
               if snake["body"][-1]["x"] == bodyPiece["x"] and snake["body"][-1]["y"] == bodyPiece["y"]:
-                gameBoard[bodyy][bodyx] = "st"
+                board[bodyy][bodyx] = "st"
   for f in food:
     foodx = f["x"]
     foody = (boardHeight - 1) - f["y"]
-    gameBoard[foody][foodx] = "f"
+    board[foody][foodx] = "f"
+  return board
 
 
 
@@ -41,6 +44,7 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
   gameBoard = copy.deepcopy(board)
   index = 0
   for m in moves:
+    deadSnakes = []
     consumedFood = False
 
     currentSnake = snakes[index]
@@ -48,10 +52,6 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
     secondLast = currentSnake["body"][-2]
     headx = currentSnake["head"]["x"]
     heady = currentSnake["head"]["y"]
-    #print("Movelist: ",moves)
-    #print("Printing at move: ",m)
-    #print(currentSnake)
-
     if m == "up":
       if not heady == height - 1:
           if gameBoard[(height  - heady )-1][headx] == "f":
@@ -60,41 +60,37 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
             gameBoard[((height  - tail["y"]) - 1)][tail["x"]] = "x"
             gameBoard[(height  - secondLast["y"]) - 1][secondLast["x"]] = "st"
             gameBoard[(height - heady) - 1 ][headx] = "sb"
-          if (not heady == (height - 1)):
             gameBoard[(height - heady) - 2 ][headx] = "sh"
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
     if m == "down":
       if not heady == 0:
         if  gameBoard[(height - (heady) )][headx] == "f":
           consumedFood = True
         
-        if not consumedFood and not heady == 0:
+        if not consumedFood:
           gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
           gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
           gameBoard[(height - heady) - 1][headx] = "sb"
-        if not heady == 0:
           gameBoard[(height - heady)][headx] = "sh"
 
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
+
 
     if m == "left":
-
       if not headx == 0:
         if gameBoard[heady][headx - 1] == "f":
           consumedFood = True
 
-      if not consumedFood and not headx == 0:
-        gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
-        gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
-        gameBoard[((height - heady) -1)][headx-1] = "sh"
-        gameBoard[((height - heady) -1)][headx] = "sb"
-      
-      if not headx == 0:
-        gameBoard[(height - heady)-1][headx - 1] = "sh"
+        if not consumedFood:
+          gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+          gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+          gameBoard[((height - heady) -1)][headx-1] = "sh"
+          gameBoard[((height - heady) -1)][headx] = "sb"
+          gameBoard[(height - heady)-1][headx - 1] = "sh"
 
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
 
     if m == "right":
@@ -103,24 +99,22 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
         if gameBoard[heady][headx + 1] == "f":
           consumedFood = True
 
-      if not consumedFood and not headx == width - 1:
-        gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
-        gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
-        gameBoard[((height - heady) -1)][headx+1] = "sh"
-        gameBoard[((height - heady) -1)][headx] = "sb"
-      if not headx == width - 1:
-        gameBoard[(height - heady)-1][headx + 1] = "sh"
+        if not consumedFood and not headx == width - 1:
+          gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+          gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+          gameBoard[((height - heady) -1)][headx+1] = "sh"
+          gameBoard[((height - heady) -1)][headx] = "sb"
+          gameBoard[(height - heady)-1][headx + 1] = "sh"
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+    if m == "trapped":
+      deadSnakes.append(index)
 
-
-    #prettyPrint(gameBoard)
     index += 1
-  return gameBoard,moves
+  return gameBoard,moves,updatedSnakes
 
 def updateSnakes(board:List[str],snakes:List[Dict],move:str,index:int,consumedFood:bool):
 
-  prettyPrint(board)
   updatedSnakes = snakes[:]
   currentSnake = copy.deepcopy(snakes[index])
   updatedSnakes.pop(index)
@@ -169,7 +163,7 @@ def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
   queue = []
   if ycord != (length - 1):
     queue.append([ycord+1,xcord])
-  if ycord == 0:
+  if ycord != 0:
     queue.append([ycord-1,xcord])
   if xcord != (length - 1):
     queue.append([ycord,xcord+1])
@@ -202,13 +196,6 @@ def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
 
   return area
 
-def resetGameBoard():
-  global gameBoard
-  gameBoard = []
-
-def getBoard():
-  return gameBoard
-
 def getHeight():
   global width
   return height
@@ -217,9 +204,6 @@ def getWidth():
   global width
   return width
 
-def setBoard(board:List[str]):
-  global gameBoard
-  gameBoard = copy.deepcopy(board)
 
 def prettyPrint(board:List[str]):
   print("\n")

@@ -1,4 +1,4 @@
-import random, RouteFinder, Board,moveLogic, maxN
+import random, RouteFinder, Board,moveLogic, maxN, time, copy
 from typing import Dict
 
 
@@ -16,6 +16,7 @@ def getMove(head: Dict[str, int], coOrd: Dict[str, int]):
 
 
 def choose_move(data: dict) -> str:
+    start = time.time()
 
     height = data["board"]["height"]
     width = data["board"]["width"]
@@ -23,43 +24,37 @@ def choose_move(data: dict) -> str:
     food = data["board"]["food"]
     my_head = data["you"]["head"]
 
-    for snake in snakes:
-      if snake["id"] == data["you"]["id"]:
-        mySnake = snake
 
-    Board.initialiseBoard(width, height)
-    Board.fillGameBoard(snakes, food, height)
-
-
-    food = RouteFinder.findClosestFood(food, my_head)
+ 
+    gameBoard = Board.initialiseBoard(width, height)
+    gameBoard = Board.fillGameBoard(snakes, food, height,gameBoard)
     possible_moves = ["up", "down", "left", "right"]
+    food = RouteFinder.findClosestFood(food, my_head)
     possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
     possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
-    path = RouteFinder.bfsForFood(food, my_head, possible_moves)
 
-    index = 0
-    for s in snakes:
-      if s["id"] == data["you"]["id"]:
-        snakes.pop(index)
-      index += 1       
-    snakes.insert(0,mySnake)
-    
-    boardCopy = Board.getBoard()[:]
-    #print("At Maxn")
+
     if data["turn"] > 5:
-      print (maxN.maxn(boardCopy,2,snakes,0))
+  
+      boardCopy =copy.deepcopy(gameBoard)
+      print (maxN.maxn(boardCopy,1,snakes,0))
+      path = RouteFinder.bfsForFood(food, my_head, possible_moves)
 
-    if path != []:
-        move = getMove(my_head, path[1])
-        if (not move in possible_moves):
-            move = random.choice(possible_moves)
+      if path != []:
+          move = getMove(my_head, path[1])
+          if (not move in possible_moves):
+              move = random.choice(possible_moves)
 
         
+      else:
+          move = random.choice(possible_moves)
     else:
-        move = random.choice(possible_moves)
-         
+      move = random.choice(possible_moves)
+
+
+    end = time.time()
+    print("The time for thinking is: ", end - start)
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"
     )
-    Board.resetGameBoard()
     return move
