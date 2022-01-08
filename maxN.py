@@ -1,37 +1,39 @@
 import moveLogic, Board, itertools, copy
 from typing import List, Dict
 
+def maxn(board:List[str], depth:int,snakes: List[Dict],snakeIndex: int):
 
-def maxn(board:List[str], depth:int,snakes: List[Dict],snakeIndex: int ):
- 
-  if snakeIndex == len(snakes)-1:
-    snakeIndex = 0
-    depth -= 1
+  newDepth = depth
+  newIndex = snakeIndex
+
+  print(depth,len(snakes),snakeIndex)
+
+  if (snakeIndex == len(snakes)-1):
+    newDepth -= 1
+    newIndex = -1
 
   if depth == 0 or len(snakes) <= 1:
-    return[5,5,5]
-    #return evaluate(board,snakes)
+    print("Return here")
+    return evaluate(board,snakes)
 
   possibleMoves = nextPossibleMoves(board,snakes)
-
   childNodes = []
 
   for moves in possibleMoves:
     newBoard = copy.deepcopy(board)
     newBoard,moveSet,updatedSnakes = Board.simulateMoves(moves,snakes,newBoard)
-
     childNodes.append([newBoard,moveSet,updatedSnakes])
 
-
-  best = maxn(childNodes[0][0],depth,childNodes[0][2],snakeIndex+1)
+  best = maxn(childNodes[0][0],newDepth,childNodes[0][2],(newIndex + 1))
 
   for child in childNodes[1:]:
-    current = maxn(child[0],depth,child[2],snakeIndex+1)
-    if current[snakeIndex] > best[snakeIndex]:
-      best = current 
+    current = maxn(child[0],newDepth,child[2],(newIndex + 1))
+    if(current[newIndex] > best[newIndex]):
+      best = current
+
   return best
-      
-      
+
+    
 
 def nextPossibleMoves(board: List[str],snakes:List[Dict]):
   moveList = [] 
@@ -51,8 +53,13 @@ def nextPossibleMoves(board: List[str],snakes:List[Dict]):
     moveTuples =  [x for x in itertools.product(moveList[0],moveList[1],moveList[2])]
   elif len(snakes) == 2:
     moveTuples = [x for x in  itertools.product(moveList[0],moveList[1])]
-  
   return moveTuples
+
+  branchFactor = 0
+  for m in moveTuples:
+    branchFactor += 1
+  
+  print(branchFactor)
 
 def evaluate(board: List[str],snakes: List[Dict]):
 

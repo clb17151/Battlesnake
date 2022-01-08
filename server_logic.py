@@ -16,7 +16,6 @@ def getMove(head: Dict[str, int], coOrd: Dict[str, int]):
 
 
 def choose_move(data: dict) -> str:
-    start = time.time()
 
     height = data["board"]["height"]
     width = data["board"]["width"]
@@ -32,13 +31,27 @@ def choose_move(data: dict) -> str:
     food = RouteFinder.findClosestFood(food, my_head)
     possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
     possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
-
+    for snake in snakes:
+      if snake["id"] == data["you"]["id"]:
+        mySnake = snake
 
     if data["turn"] > 5:
+      start = time.time()
+
   
+
+      index = 0
+      for s in snakes:
+        if s["id"] == data["you"]["id"]:
+          snakes.pop(index)
+        index += 1       
+      snakes.insert(0,mySnake)
+
       boardCopy =copy.deepcopy(gameBoard)
       print (maxN.maxn(boardCopy,1,snakes,0))
       path = RouteFinder.bfsForFood(food, my_head, possible_moves)
+      end = time.time()
+      print("The time for thinking is: ", end - start)
 
       if path != []:
           move = getMove(my_head, path[1])
@@ -52,8 +65,6 @@ def choose_move(data: dict) -> str:
       move = random.choice(possible_moves)
 
 
-    end = time.time()
-    print("The time for thinking is: ", end - start)
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"
     )
