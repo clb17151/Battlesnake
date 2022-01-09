@@ -9,13 +9,13 @@ def avoid_other_snakes(my_head: Dict[str, int], enemy_snake: List[dict],
             if my_head["x"] == snake_body["x"] + 1 and my_head[
                     "y"] == snake_body["y"] and "left" in possible_moves:
                 possible_moves.remove("left")
-            elif my_head["x"] == snake_body["x"] - 1 and my_head[
+            if my_head["x"] == snake_body["x"] - 1 and my_head[
                     "y"] == snake_body["y"] and "right" in possible_moves:
                 possible_moves.remove("right")
-            elif my_head["y"] == snake_body["y"] + 1 and my_head[
+            if my_head["y"] == snake_body["y"] + 1 and my_head[
                     "x"] == snake_body["x"] and "down" in possible_moves:
                 possible_moves.remove("down")
-            elif my_head["y"] == snake_body["y"] - 1 and my_head[
+            if my_head["y"] == snake_body["y"] - 1 and my_head[
                     "x"] == snake_body["x"] and "up" in possible_moves:
                 possible_moves.remove("up")
     return possible_moves
@@ -32,3 +32,33 @@ def avoid_walls(my_head: Dict[str, int], width: int, height: int,
     if my_head["y"] == height - 1 and "up" in possible_moves:
         possible_moves.remove("up")
     return possible_moves
+
+def checkForHeadCollision(my_snake: List[Dict],snakes:List[dict],possible_moves: List[str],board:List[str]):
+  newMoves = possible_moves[:]
+  for s in snakes:
+
+    if "left" in newMoves:
+      if (s["head"]["y"] - 1 == my_snake["head"]["y"] or s["head"]["y"] + 1 == my_snake["head"]["y"] or s["head"]["y"] == my_snake["head"]["y"]) and ((s["head"]["x"] == my_snake["head"]["x"]-2) or my_snake["head"]["x"] - 1 == s["head"]["x"]):
+        if(len(my_snake["body"]) <= len(s["body"])):
+          newMoves.remove("left")
+
+    if "right" in newMoves: 
+      if (s["head"]["y"] - 1 == my_snake["head"]["y"] or s["head"]["y"] + 1 == my_snake["head"]["y"] or s["head"]["y"] == my_snake["head"]["y"] ) and ((s["head"]["x"] == my_snake["head"]["x"]+2) or my_snake["head"]["x"] + 1 == s["head"]["x"]):
+        if(len(my_snake["body"]) <= len(s["body"])):
+          newMoves.remove("right")
+
+    if "down" in newMoves:
+      if (s["head"]["y"] + 2 == my_snake["head"]["y"] or s["head"]["y"] + 1 == my_snake["head"]["y"] ) and ((s["head"]["x"] == my_snake["head"]["x"]+1) or my_snake["head"]["x"]-1 == s["head"]["x"]):
+
+        if(len(my_snake["body"]) <= len(s["body"])):
+          newMoves.remove("down")
+
+    if "up" in newMoves:
+      if (s["head"]["y"] - 2 == my_snake["head"]["y"] or s["head"]["y"] - 1 == my_snake["head"]["y"]) and ((s["head"]["x"] == my_snake["head"]["x"]+1) or my_snake["head"]["x"]-1 == s["head"]["x"]):
+        if(len(my_snake["body"]) <= len(s["body"])):
+          newMoves.remove("up")
+
+  if newMoves == []:
+    return possible_moves
+
+  return newMoves

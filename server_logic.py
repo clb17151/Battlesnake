@@ -1,4 +1,4 @@
-import random, RouteFinder, Board,moveLogic, maxN
+import random, RouteFinder, Board,moveLogic,bestReply
 from typing import Dict
 
 
@@ -35,7 +35,8 @@ def choose_move(data: dict) -> str:
     possible_moves = ["up", "down", "left", "right"]
     possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
     possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
-    path = RouteFinder.bfsForFood(food, my_head, possible_moves)
+    possible_moves = moveLogic.checkForHeadCollision(mySnake,snakes,possible_moves,Board.getBoard())
+
 
     index = 0
     for s in snakes:
@@ -44,22 +45,43 @@ def choose_move(data: dict) -> str:
       index += 1       
     snakes.insert(0,mySnake)
     
+    path = RouteFinder.bfsForFood(food, my_head, possible_moves)
+
+  
+    pinf = float('inf')
+    ninf = float('-inf')
     boardCopy = Board.getBoard()[:]
-    #print("At Maxn")
-    if data["turn"] > 5:
-      print (maxN.maxn(boardCopy,2,snakes,0))
+
+    result = (bestReply.BRS(ninf,pinf,2,"Max",boardCopy,snakes,"initial",mySnake))
+    if result[1] in possible_moves:
+      move = result[1]
+    else:
+      move = random.choice(possible_moves)
+
+    if data["you"]["health"] < 50:
+      if path != []:
+        print("looking for food")
+        move = getMove(my_head, path[1])
+      if (not move in possible_moves):
+        move = random.choice(possible_moves)
+        
+    """if not move in possible_moves:
+      move = random.choice(possible_moves)
 
     if path != []:
-        move = getMove(my_head, path[1])
-        if (not move in possible_moves):
-            move = random.choice(possible_moves)
-
-        
-    else:
+      move = getMove(my_head, path[1])
+      if (not move in possible_moves):
+        print("the move is to get food")
         move = random.choice(possible_moves)
-         
+    else:
+      print("path is blank")
+      move = random.choice(possible_moves)"""
+
+
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"
     )
+
+
     Board.resetGameBoard()
     return move

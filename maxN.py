@@ -26,16 +26,11 @@ def maxn(board:List[str], depth:int,snakes: List[Dict],snakeIndex: int ):
   best = maxn(childNodes[0],depth,snakes,snakeIndex+1)
 
   for child in childNodes[1:]:
-   
     current = maxn(child,depth,snakes,snakeIndex+1)
     if current[snakeIndex] > best[snakeIndex]:
       best = current 
-
-
   return best
 
-
-      
       
 
 def nextPossibleMoves(board: List[str],snakes:List[Dict]):
@@ -56,7 +51,6 @@ def nextPossibleMoves(board: List[str],snakes:List[Dict]):
   return moveTuples
 
 def evaluate(board: List[str],snakes: List[Dict]):
-
 
   for s in snakes:
     floodfillScore = Board.floodFill(board,s["head"]["x"],s["head"]["y"],s)

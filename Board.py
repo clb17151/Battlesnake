@@ -36,21 +36,19 @@ def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
 
 
 
-def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
+"""def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
   global height,width
   gameBoard = copy.deepcopy(board)
   index = 0
   for m in moves:
     consumedFood = False
-
     currentSnake = snakes[index]
     tail = currentSnake["body"][-1]
     secondLast = currentSnake["body"][-2]
     headx = currentSnake["head"]["x"]
     heady = currentSnake["head"]["y"]
-    #print("Movelist: ",moves)
-    #print("Printing at move: ",m)
-    #print(currentSnake)
+    updatedSnakes = snakes[:]
+
 
     if m == "up":
       if not heady == height - 1:
@@ -62,7 +60,7 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
             gameBoard[(height - heady) - 1 ][headx] = "sb"
           if (not heady == (height - 1)):
             gameBoard[(height - heady) - 2 ][headx] = "sh"
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
 
     if m == "down":
@@ -77,14 +75,12 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
         if not heady == 0:
           gameBoard[(height - heady)][headx] = "sh"
 
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
     if m == "left":
-
       if not headx == 0:
         if gameBoard[heady][headx - 1] == "f":
           consumedFood = True
-
       if not consumedFood and not headx == 0:
         gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
         gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
@@ -93,16 +89,13 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
       
       if not headx == 0:
         gameBoard[(height - heady)-1][headx - 1] = "sh"
-
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
 
 
     if m == "right":
-
       if not headx == width - 1:
         if gameBoard[heady][headx + 1] == "f":
           consumedFood = True
-
       if not consumedFood and not headx == width - 1:
         gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
         gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
@@ -110,66 +103,121 @@ def simulateMoves(moves:List[str],snakes:List[Dict],board:List[str]):
         gameBoard[((height - heady) -1)][headx] = "sb"
       if not headx == width - 1:
         gameBoard[(height - heady)-1][headx + 1] = "sh"
-
-      updateSnakes(gameBoard,snakes,m,index,consumedFood)
-
-
-    #prettyPrint(gameBoard)
+      updatedSnakes = updateSnakes(gameBoard,snakes,m,index,consumedFood)
+      
     index += 1
-  return gameBoard,moves
-
-def updateSnakes(board:List[str],snakes:List[Dict],move:str,index:int,consumedFood:bool):
-
-  prettyPrint(board)
-  updatedSnakes = snakes[:]
-  currentSnake = copy.deepcopy(snakes[index])
-  updatedSnakes.pop(index)
-  secondLast = currentSnake["body"][-2]
-  headx = currentSnake["head"]["x"]
-  heady = currentSnake["head"]["y"]
-  if move == "up":
+  return gameBoard,moves,updatedSnakes
+"""
+def updateSnakes(board:List[str],snake:List[Dict],move:str,index:int,consumedFood:bool):
+  global height,width
+  updatedSnake = copy.copy(snake)
+  secondLast = updatedSnake["body"][-2]
+  headx = updatedSnake["head"]["x"]
+  heady = updatedSnake["head"]["y"]
+  if move == "up" and heady != len(board)-1:
       newHead = {"x":headx,"y":heady+1}
-
-  if move == "down":
+  elif move == "down" and heady != 0:
       newHead = {"x":headx,"y":heady-1}
 
-  if move == "left":
+  elif move == "left" and headx != 0:
     newHead = {"x":headx - 1,"y":heady}
 
-  if move == "right":
+  elif move == "right" and headx != len(board)-1:
     newHead = {"x":headx + 1, "y":heady}
 
+  else:
+    return []
+
   if not consumedFood:
-    currentSnake["head"] = newHead
-    currentSnake["body"].insert(0,newHead)
-    currentSnake["body"].pop(-1)
+    updatedSnake["head"] = newHead
+    updatedSnake["body"].insert(0,newHead)
+    updatedSnake["body"].pop(-1)
 
-    
   else: 
-    currentSnake["head"] = newHead
-    currentSnake["body"].insert(0,newHead)
-    currentSnake["body"].pop(-1)
-    currentSnake["body"].insert(-1,secondLast)
+    updatedSnake["head"] = newHead
+    updatedSnake["body"].insert(0,newHead)
+    updatedSnake["body"].pop(-1)
+    updatedSnake["body"].insert(-1,secondLast)
   
-  length = len(currentSnake["body"])
-  currentSnake["length"] = length
-  
-  updatedSnakes.insert(index,currentSnake)
+  length = len(updatedSnake["body"])
+  updatedSnake["length"] = length
+  return updatedSnake
 
-  return updatedSnakes
     
+def doMove(move:str,snake:List[Dict],board:List[str],index:int):
 
+  global height,width
+  gameBoard = copy.deepcopy(board)
+  consumedFood = False
+  tail = snake["body"][-1]
+  secondLast = snake["body"][-2]
+  headx = snake["head"]["x"]
+  heady = snake["head"]["y"]
+  updatedSnake = []
+
+
+  if move == "up":
+    if not heady == height - 1:
+      if gameBoard[(height  - heady )-2][headx] == "f":
+        consumedFood = True
+      if not consumedFood:
+        gameBoard[((height  - tail["y"]) - 1)][tail["x"]] = "x"
+        gameBoard[(height  - secondLast["y"]) - 1][secondLast["x"]] = "st"
+        gameBoard[(height - heady) - 1 ][headx] = "sb"
+        gameBoard[(height - heady) - 2 ][headx] = "sh"
+      updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
+
+
+  if move == "down":
+    if not heady == 0:
+      if  gameBoard[(height - (heady) )][headx] == "f":
+        consumedFood = True
+      if not consumedFood and not heady == 0:
+        gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+        gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+        gameBoard[(height - heady) - 1][headx] = "sb"
+        gameBoard[(height - heady)][headx] = "sh"
+      updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
+
+
+  if move == "left":
+    if not headx == 0:
+
+      if gameBoard[heady][headx - 1] == "f":
+        consumedFood = True
+    if not consumedFood:
+      gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+      gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+      gameBoard[((height - heady) -1)][headx-1] = "sh"
+      gameBoard[((height - heady) -1)][headx] = "sb"
+    updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
+
+
+  if move == "right":
+
+    if not headx == width - 1:
+      if gameBoard[heady][headx + 1] == "f":
+        consumedFood = True
+      if not consumedFood:
+        gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
+        gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
+        gameBoard[((height - heady) -1)][headx+1] = "sh"
+        gameBoard[((height - heady) -1)][headx] = "sb"
+      updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
+
+
+  return gameBoard,updatedSnake
 
 
 
 def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
-
+  global height,width
   area = 0
-  length = len(board)
+  length = width
   queue = []
   if ycord != (length - 1):
     queue.append([ycord+1,xcord])
-  if ycord == 0:
+  if ycord != 0:
     queue.append([ycord-1,xcord])
   if xcord != (length - 1):
     queue.append([ycord,xcord+1])
@@ -181,6 +229,7 @@ def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
     n = queue.pop()
     if n not in visited:
       visited.append(n)
+
       if board[((length-n[0]) - 1)][n[1]] == "x" or board[((length-n[0]) - 1)][n[1]] == "f":  
         area += 1
 
