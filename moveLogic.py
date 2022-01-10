@@ -48,13 +48,13 @@ def checkForHeadCollision(my_snake: List[Dict],snakes:List[dict],possible_moves:
           newMoves.remove("right")
 
     if "down" in newMoves:
-      if (s["head"]["y"] + 2 == my_snake["head"]["y"] or s["head"]["y"] + 1 == my_snake["head"]["y"] ) and ((s["head"]["x"] == my_snake["head"]["x"]+1) or my_snake["head"]["x"]-1 == s["head"]["x"]):
+      if (s["head"]["y"] + 2 == my_snake["head"]["y"] or s["head"]["y"] + 1 == my_snake["head"]["y"] ) and ((s["head"]["x"] == my_snake["head"]["x"]+1) or my_snake["head"]["x"]-1 == s["head"]["x"] or my_snake["head"]["x"] == s["head"]["x"]):
 
         if(len(my_snake["body"]) <= len(s["body"])):
           newMoves.remove("down")
 
     if "up" in newMoves:
-      if (s["head"]["y"] - 2 == my_snake["head"]["y"] or s["head"]["y"] - 1 == my_snake["head"]["y"]) and ((s["head"]["x"] == my_snake["head"]["x"]+1) or my_snake["head"]["x"]-1 == s["head"]["x"]):
+      if (s["head"]["y"] - 2 == my_snake["head"]["y"] or s["head"]["y"] - 1 == my_snake["head"]["y"]) and ((s["head"]["x"] == my_snake["head"]["x"]+1) or my_snake["head"]["x"]-1 == s["head"]["x"] or my_snake["head"]["x"] == s["head"]["x"] ):
         if(len(my_snake["body"]) <= len(s["body"])):
           newMoves.remove("up")
 

@@ -47,36 +47,26 @@ def choose_move(data: dict) -> str:
     
     path = RouteFinder.bfsForFood(food, my_head, possible_moves)
 
-  
     pinf = float('inf')
     ninf = float('-inf')
     boardCopy = Board.getBoard()[:]
 
     result = (bestReply.BRS(ninf,pinf,2,"Max",boardCopy,snakes,"initial",mySnake))
     if result[1] in possible_moves:
+      print(result)
       move = result[1]
     else:
+      print("Broken")
+      print(result)
+      print(possible_moves)
       move = random.choice(possible_moves)
 
     if data["you"]["health"] < 50:
       if path != []:
-        print("looking for food")
         move = getMove(my_head, path[1])
       if (not move in possible_moves):
         move = random.choice(possible_moves)
         
-    """if not move in possible_moves:
-      move = random.choice(possible_moves)
-
-    if path != []:
-      move = getMove(my_head, path[1])
-      if (not move in possible_moves):
-        print("the move is to get food")
-        move = random.choice(possible_moves)
-    else:
-      print("path is blank")
-      move = random.choice(possible_moves)"""
-
 
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"
