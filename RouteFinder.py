@@ -1,9 +1,10 @@
 from typing import List, Dict
+import Board
 
 def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
   newPositions = []
   for move in possible_moves:
-    if(move == "up"):
+    if(move == "up" and my_head["y"] < Board.getHeight() ):
       xCoOrd = my_head["x"] 
       yCoOrd = my_head["y"] + 1
       newPos = {
@@ -11,7 +12,7 @@ def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
         "y": yCoOrd
       }
       newPositions.append(newPos)
-    if(move == "down"):
+    if(move == "down" and my_head["y"] > 0):
       xCoOrd = my_head["x"] 
       yCoOrd = my_head["y"] - 1
       newPos = {
@@ -19,7 +20,7 @@ def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
         "y": yCoOrd
       }
       newPositions.append(newPos)
-    if(move == "left"):
+    if(move == "left" and my_head["x"] > 0):
       xCoOrd = my_head["x"] - 1
       yCoOrd = my_head["y"] 
       newPos = {
@@ -27,7 +28,7 @@ def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
         "y": yCoOrd
       }
       newPositions.append(newPos)
-    if(move == "right"):
+    if(move == "right" and my_head["x"] < Board.getWidth()):
       xCoOrd = my_head["x"] +1
       yCoOrd = my_head["y"] 
       newPos = {
@@ -54,9 +55,7 @@ def findClosestFood(food: List, head: Dict[str,int]):
 def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List[str]):
   queue = [[head]]
   visited = []
-  count = 0
-  while queue and count < 100: 
-    count += 1
+  while queue : 
     path = queue.pop(0)
     currentCoOrd = path[-1]
     if(currentCoOrd == foodCoOrd):
@@ -71,3 +70,24 @@ def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List
           queue.append(newList)
   return []    
 
+def dfsForFood(foodCoOrd: Dict[str,int], node: Dict[str,int],possible_moves:List[str]):
+
+  queue = [[node]]
+  visited = []
+  while queue: 
+    path = queue.pop(0)
+    currentCoOrd = path[-1]
+    if(currentCoOrd == foodCoOrd):
+      return path
+    else:
+      newPositions = simulateMove(currentCoOrd,possible_moves)
+      neighbours = []
+      for pos in newPositions:
+        if(not pos in visited):
+          visited.append(pos)
+          newList = list(path)
+          newList.append(pos)
+          neighbours.append(newList)
+      queue = neighbours + queue
+
+  return [] 

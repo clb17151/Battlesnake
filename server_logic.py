@@ -1,4 +1,4 @@
-import random, RouteFinder, Board,moveLogic,bestReply
+import random, RouteFinder, Board,moveLogic,bestReply,time
 from typing import Dict
 
 
@@ -16,6 +16,7 @@ def getMove(head: Dict[str, int], coOrd: Dict[str, int]):
 
 
 def choose_move(data: dict) -> str:
+    Board.resetGameBoard()
 
     height = data["board"]["height"]
     width = data["board"]["width"]
@@ -44,24 +45,29 @@ def choose_move(data: dict) -> str:
         snakes.pop(index)
       index += 1       
     snakes.insert(0,mySnake)
-    
     path = RouteFinder.bfsForFood(food, my_head, possible_moves)
+
 
     pinf = float('inf')
     ninf = float('-inf')
     boardCopy = Board.getBoard()[:]
+    move = random.choice(possible_moves)
 
-    result = (bestReply.BRS(ninf,pinf,2,"Max",boardCopy,snakes,"initial",mySnake))
-    if result[1] in possible_moves:
-      print(result)
-      move = result[1]
-    else:
-      print("Broken")
-      print(result)
-      print(possible_moves)
-      move = random.choice(possible_moves)
 
-    if data["you"]["health"] < 50:
+    if data['turn'] > 5:
+      if len (possible_moves) > 1:
+        result = (bestReply.BRS(ninf,pinf,8-len(snakes),"Max",boardCopy,snakes,"initial",mySnake))
+  
+        if result[1] in possible_moves:
+          print(result)
+          move = result[1]
+        else:
+          print("Broken")
+          print(result)
+          print(possible_moves)
+          move = random.choice(possible_moves)
+
+    if data["you"]["health"] < 25:
       if path != []:
         move = getMove(my_head, path[1])
       if (not move in possible_moves):
@@ -73,5 +79,4 @@ def choose_move(data: dict) -> str:
     )
 
 
-    Board.resetGameBoard()
     return move

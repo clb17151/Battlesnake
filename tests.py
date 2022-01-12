@@ -12,11 +12,10 @@ in the folder where this file exists:
 
 """
 import unittest
+import moveLogic,Board,bestReply
 
-from moveLogic import checkForHeadCollision
 
-
-class AvoidNeckTest(unittest.TestCase):
+class AvoidHeadCollisions(unittest.TestCase):
     def test_head_collision_right(self):
    
         # Arrange
@@ -41,7 +40,7 @@ class AvoidNeckTest(unittest.TestCase):
         possible_moves = ["up", "down", "left", "right"]
 
         # Act
-        result_moves = checkForHeadCollision(my_snake,snakes,possible_moves,board)
+        result_moves = moveLogic.checkForHeadCollision(my_snake,snakes,possible_moves,board)
 
         # Assert
         self.assertEqual(["up","down","left"], result_moves)
@@ -71,7 +70,7 @@ class AvoidNeckTest(unittest.TestCase):
         possible_moves = ["up", "down", "left", "right"]
 
         # Act
-        result_moves = checkForHeadCollision(my_snake,snakes,possible_moves,board)
+        result_moves = moveLogic.checkForHeadCollision(my_snake,snakes,possible_moves,board)
 
         # Assert
         self.assertEqual(["up","down","right"], result_moves)
@@ -99,7 +98,7 @@ class AvoidNeckTest(unittest.TestCase):
         possible_moves = ["up", "down", "left", "right"]
 
         # Act
-        result_moves = checkForHeadCollision(my_snake,snakes,possible_moves,board)
+        result_moves = moveLogic.checkForHeadCollision(my_snake,snakes,possible_moves,board)
 
         # Assert
         self.assertEqual(["up","right"], result_moves)
@@ -127,7 +126,7 @@ class AvoidNeckTest(unittest.TestCase):
       possible_moves = ["up", "down", "left", "right"]
 
       # Act
-      result_moves = checkForHeadCollision(my_snake,snakes,possible_moves,board)
+      result_moves = moveLogic.checkForHeadCollision(my_snake,snakes,possible_moves,board)
 
       # Assert
       self.assertEqual(["down","left"], result_moves)
@@ -155,7 +154,7 @@ class AvoidNeckTest(unittest.TestCase):
         possible_moves = ["up", "down", "left", "right"]
 
         # Act
-        result_moves = checkForHeadCollision(my_snake,snakes,possible_moves,board)
+        result_moves = moveLogic.checkForHeadCollision(my_snake,snakes,possible_moves,board)
 
         # Assert
         self.assertEqual(["up","down","left","right"], result_moves)
@@ -181,11 +180,37 @@ class AvoidNeckTest(unittest.TestCase):
         possible_moves = ["up", "down", "left", "right"]
 
         # Act
-        result_moves = checkForHeadCollision(my_snake,snakes,possible_moves,board)
+        result_moves = moveLogic.checkForHeadCollision(my_snake,snakes,possible_moves,board)
 
         # Assert
         self.assertEqual(["down","left","right"], result_moves)
 
+    def test_flood(self):
+  
+        # Arrange
+        board = [
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['x', 'x', 'st', 'sb', 'x', 'x', 'x'], 
+        ['x', 'x', 'sb', 'sb', 'x', 'x', 'x'], 
+        ['x', 'x', 'sh', 'x', 'sb', 'sb', 'st'],
+        ['x', 'x', 'x', 'sh', 'sb', 'sb', 'sb']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 3, 'y': 0}, {'x': 4, 'y': 0}, {'x': 4, 'y': 1}, {'x': 5, 'y': 1}, {'x': 5, 'y': 0}, {'x': 6, 'y': 0}, {'x': 6, 'y': 1}], 'head': {'x': 3, 'y': 0}, 'length': 5, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+        snakes = [ {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 3, 'y': 0}, {'x': 4, 'y': 0}, {'x': 4, 'y': 1}, {'x': 5, 'y': 1}, {'x': 5, 'y': 0}, {'x': 6, 'y': 0}, {'x': 6, 'y': 1}], 'head': {'x': 3, 'y': 0}, 'length': 5, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}, {'id': 'gs_VkYymmVCfGFSMMj3DSg7wYVV', 'name': 'Barry', 'latency': '59', 'health': 93, 'body': [{'x': 2, 'y': 1}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 3, 'y': 3},{'x': 2, 'y': 3}], 'head': {'x': 2, 'y': 1}, 'length': 5, 'shout': '', 'squad': '', 'customizations': {'color': '#fb6900', 'head': 'default', 'tail': 'default'}}]
+
+        Board.initialiseBoard(7, 7)
+        Board.fillGameBoard(snakes, [], 7)
+
+        pinf = float('inf')
+        ninf = float('-inf')
+        result = (bestReply.BRS(ninf,pinf,3,"Max",board,snakes,"initial",my_snake))
+
+
+        # Assert
+        self.assertEqual((19,'left'),result)
 
 if __name__ == "__main__":
     unittest.main()
