@@ -6,7 +6,6 @@ from flask import request
 
 import server_logic
 
-
 app = Flask(__name__)
 
 
@@ -24,10 +23,10 @@ def handle_info():
     print("INFO")
     return {
         "apiversion": "1",
-        "author": "ekans", 
-        "color": "#800080", 
-        "head": "safe",  
-        "tail": "small-rattle",  
+        "author": "ekans",
+        "color": "#800080",
+        "head": "safe",
+        "tail": "small-rattle",
     }
 
 
@@ -66,6 +65,33 @@ def end():
     data = request.get_json()
 
     print(f"{data['game']['id']} END")
+    f = open("gameHistory.txt", "a")
+    f.write("\n")
+    
+    finalsnake = data["board"]["snakes"][0]
+    
+    if finalsnake == []:
+      f.write(f"Tie")
+      f.write("\n")
+      f.write(f"{data['turn']}")
+      f.write("\n")
+      f.write(f"{data['game']['id']} ")
+    else:
+      if finalsnake['id'] == data['you']['id'] :
+        f.write(f"Win")
+        f.write("\n")
+        f.write(f"{data['turn']}")
+        f.write("\n")
+        f.write(f"{data['game']['id']} ")
+      else:
+        f.write(f"Loss")
+        f.write("\n")
+        f.write(f"{data['turn']}")
+        f.write("\n")
+        f.write(f"{data['game']['id']} ")
+    f.write("\n")
+    
+    f.close()
     return "ok"
 
 

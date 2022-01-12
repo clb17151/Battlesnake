@@ -1,4 +1,4 @@
-import random, RouteFinder, Board,moveLogic,bestReply,time
+import random, RouteFinder, Board,moveLogic,bestReply
 from typing import Dict
 
 
@@ -56,7 +56,7 @@ def choose_move(data: dict) -> str:
 
     if data['turn'] > 5:
       if len (possible_moves) > 1:
-        result = (bestReply.BRS(ninf,pinf,8-len(snakes),"Max",boardCopy,snakes,"initial",mySnake))
+        result = (bestReply.BRS(ninf,pinf,7-len(snakes),"Max",boardCopy,snakes,"initial",mySnake))
   
         if result[1] in possible_moves:
           print(result)
