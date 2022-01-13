@@ -46,7 +46,6 @@ def choose_move(data: dict) -> str:
         snakes.pop(index)
       index += 1       
     snakes.insert(0,mySnake)
-    path = RouteFinder.bfsForFood(food, my_head, possible_moves)
 
 
     pinf = float('inf')
@@ -69,6 +68,7 @@ def choose_move(data: dict) -> str:
           move = random.choice(possible_moves)
 
     if data["you"]["health"] < 25:
+      path = RouteFinder.bfsForFood(food, my_head, possible_moves,boardCopy)
       if path != []:
         move = getMove(my_head, path[1])
       if (not move in possible_moves):

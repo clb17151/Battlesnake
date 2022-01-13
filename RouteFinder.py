@@ -1,17 +1,17 @@
 from typing import List, Dict
 import Board
 
-def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
+def simulateMove(my_head : Dict[str,int], possible_moves : List[str],board:List[Dict]):
   newPositions = []
+  newPos = {}
   for move in possible_moves:
-    if(move == "up" and my_head["y"] < Board.getHeight() ):
+    if(move == "up" and my_head["y"] < Board.getHeight() -1 ):
       xCoOrd = my_head["x"] 
       yCoOrd = my_head["y"] + 1
       newPos = {
         "x": xCoOrd,
         "y": yCoOrd
       }
-      newPositions.append(newPos)
     if(move == "down" and my_head["y"] > 0):
       xCoOrd = my_head["x"] 
       yCoOrd = my_head["y"] - 1
@@ -19,7 +19,6 @@ def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
         "x": xCoOrd,
         "y": yCoOrd
       }
-      newPositions.append(newPos)
     if(move == "left" and my_head["x"] > 0):
       xCoOrd = my_head["x"] - 1
       yCoOrd = my_head["y"] 
@@ -27,15 +26,16 @@ def simulateMove(my_head : Dict[str,int], possible_moves : List[str]):
         "x": xCoOrd,
         "y": yCoOrd
       }
-      newPositions.append(newPos)
-    if(move == "right" and my_head["x"] < Board.getWidth()):
+    if(move == "right" and my_head["x"] < Board.getWidth() - 1):
       xCoOrd = my_head["x"] +1
       yCoOrd = my_head["y"] 
       newPos = {
         "x": xCoOrd,
         "y": yCoOrd
       }
-      newPositions.append(newPos)
+    if not newPos == {}:
+      if(board[len(board)-1-newPos['y']][newPos['x']] == 'x' or board[len(board)-1-newPos['y']][newPos['x']] == 'f'):
+        newPositions.append(newPos)
   
   return newPositions
 
@@ -52,7 +52,7 @@ def findClosestFood(food: List, head: Dict[str,int]):
       
   return closestFood,smallestDistance
 
-def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List[str]):
+def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List[str],board:List[Dict]):
   queue = [[head]]
   visited = []
   while queue : 
@@ -61,7 +61,7 @@ def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List
     if(currentCoOrd == foodCoOrd):
       return path
     else:
-      newPositions = simulateMove(currentCoOrd,possible_moves)
+      newPositions = simulateMove(currentCoOrd,possible_moves,board)
       for pos in newPositions:
         if(not pos in visited):
           visited.append(pos)
@@ -70,7 +70,7 @@ def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List
           queue.append(newList)
   return []    
 
-def dfsForFood(foodCoOrd: Dict[str,int], node: Dict[str,int],possible_moves:List[str]):
+def dfsForFood(foodCoOrd: Dict[str,int], node: Dict[str,int],possible_moves:List[str],board:List[Dict]):
 
   queue = [[node]]
   visited = []
@@ -80,7 +80,7 @@ def dfsForFood(foodCoOrd: Dict[str,int], node: Dict[str,int],possible_moves:List
     if(currentCoOrd == foodCoOrd):
       return path
     else:
-      newPositions = simulateMove(currentCoOrd,possible_moves)
+      newPositions = simulateMove(currentCoOrd,possible_moves,board)
       neighbours = []
       for pos in newPositions:
         if(not pos in visited):

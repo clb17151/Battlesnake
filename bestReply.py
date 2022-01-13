@@ -93,7 +93,6 @@ def evaluate(board: List[str],snake: List[Dict],allSnakes: List[Dict]):
 
   totalScore += len(board) - distToFood
 
-
   totalScore += myLength
     
   floodfillScore = Board.floodFill(board,snake["head"]["x"],snake["head"]["y"],snake)
