@@ -217,7 +217,7 @@ class AvoidHeadCollisions(unittest.TestCase):
 
         
         # Assert
-        self.assertEqual(0,result)
+        self.assertEqual("right",result[1])
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,65 +3,47 @@ from typing import List, Dict
 
 
 def BRS(alpha:int, beta:int, depth: int, turn:str,board:List[str],snakes: List[Dict],prevMove: str,mySnake:List[Dict]):
-  Board.prettyPrint(board)
-  print(alpha,beta,depth,turn,prevMove)
   enemies = snakes[:]
   enemies.pop(0)
   newMove = prevMove
-  bestMove = prevMove
+  bestMove = ""
   deadSnakes = []
 
   if depth <= 0:
     score = evaluate(board,mySnake,snakes)
-    print("Depth < 0, Score is: ",score)
     return score,prevMove
   if turn == "Max":
     moves = generateMoves(board,mySnake,snakes,turn)
     if moves == []:
-      print("No moves for Max: ")
-      print(alpha,beta,depth,turn,prevMove)
-      return float('-inf'),prevMove
+      score = evaluate(board,mySnake,snakes)
+      return score,prevMove
     turn = "Min"
 
     for move in moves:
-      print("At Ekans move")
-      print("Current move: ",move)
-      Board.prettyPrint(board)
 
       newBoard = board[:]
       copyOfMe = copy.deepcopy(mySnake)
       newBoard,updatedSnake = Board.doMove(move,copyOfMe,newBoard,0)
-      print("After move")
-      Board.prettyPrint(newBoard)
 
       snakes.pop(0)
       snakes.insert(0,updatedSnake)
       newBeta = beta * -1
       newAlpha = alpha * -1
-      print("Calling BRS at line 40: ")
-      print(newBeta,newAlpha,depth-1,turn,move,prevMove)
 
       v,newMove = BRS(newBeta,newAlpha,depth - 1, turn,newBoard,snakes,move,updatedSnake)
       v = -v
-      print("BRS at 45 returned value: ",v,"With move returned: ",newMove)
-      print(alpha,beta)
       if v >= beta:
-        print("V >= beta at line 48, Returning: ",v,newMove)
         return v,newMove
-      alpha = max(alpha,v)
-      if alpha == v:
-        print("V > alpha at line 52, New best move: ",move)
+      if v > alpha:
+        alpha = v
         bestMove = move
+      
 
   else:
     moves = []
-    Board.prettyPrint(board)
     for e in enemies:
-      print(e['head'])
       newMoves = [generateMoves(board,e,snakes,turn)]
-      print(newMoves)
       if newMoves == []:
-        print("dead snake")
         deadSnakes += e
       else:
         moves += newMoves
@@ -70,37 +52,27 @@ def BRS(alpha:int, beta:int, depth: int, turn:str,board:List[str],snakes: List[D
     index = 0
     for moveSet in moves:
       for move in moveSet:
-        print("Current move: ",move)
-        print("For snake: ",enemies[index]['id'])
-        Board.prettyPrint(board)
 
         newBoard = board[:]
         newSnakes = snakes[:]
         currentSnake = copy.deepcopy(enemies[index])
         newBoard,updatedSnake = Board.doMove(move,currentSnake,newBoard,index)
-        print("After move")
-        Board.prettyPrint(newBoard)
 
         if not updatedSnake == []:
           newSnakes.pop(index+1)
           newSnakes.insert(index+1,updatedSnake)
-     
+    
         newBeta = beta * -1
         newAlpha = alpha * -1
-        print("Calling BRS at line 88: ")
-        print(newBeta,newAlpha,depth-1,turn,move,prevMove)
         v,newMove = BRS(newBeta,newAlpha,depth-1, turn,newBoard,newSnakes,move,mySnake)
-        print("BRS at 89 returned value: ",v,"With move returned: ",newMove)
-        print(alpha,beta)
 
         v = -v
         if v >= beta:
-          print("V >= beta at line 94, Returning: ",v,newMove)
           return v,newMove
-        alpha = max(alpha,v)
-        if alpha == v:
-          print("V > alpha at line 98, New best move: ",prevMove)
-          bestMove = prevMove
+        if v > alpha:
+          alpha = v
+          bestMove = move
+        
       index += 1
   return alpha,bestMove
 
@@ -110,17 +82,21 @@ def BRS(alpha:int, beta:int, depth: int, turn:str,board:List[str],snakes: List[D
 
 def evaluate(board: List[str],snake: List[Dict],allSnakes: List[Dict]):
   totalScore = 0
+  floodfillScore = Board.floodFill(board,snake["head"]["x"],snake["head"]["y"],snake)
+  myLength = len(snake["body"])
+  if floodfillScore < myLength:
+    return 1
+  else:
+    totalScore += floodfillScore
   
   distToFood = RouteFinder.findClosestFood(Board.getFood(),snake['head'])[1]
 
   totalScore += len(board) - distToFood
 
-  myLength = len(snake["body"])
 
   totalScore += myLength
     
   floodfillScore = Board.floodFill(board,snake["head"]["x"],snake["head"]["y"],snake)
-  totalScore += floodfillScore
 
   if floodfillScore < myLength:
     return float("-inf")
