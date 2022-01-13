@@ -17,6 +17,7 @@ def getMove(head: Dict[str, int], coOrd: Dict[str, int]):
 
 def choose_move(data: dict) -> str:
     Board.resetGameBoard()
+    Board.resetFood()
 
     height = data["board"]["height"]
     width = data["board"]["width"]
@@ -32,7 +33,7 @@ def choose_move(data: dict) -> str:
     Board.fillGameBoard(snakes, food, height)
 
 
-    food = RouteFinder.findClosestFood(food, my_head)
+    food = RouteFinder.findClosestFood(food, my_head)[0]
     possible_moves = ["up", "down", "left", "right"]
     possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
     possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
@@ -56,7 +57,7 @@ def choose_move(data: dict) -> str:
 
     if data['turn'] > 5:
       if len (possible_moves) > 1:
-        result = (bestReply.BRS(ninf,pinf,7-len(snakes),"Max",boardCopy,snakes,"initial",mySnake))
+        result = (bestReply.BRS(ninf,pinf,2,"Max",boardCopy,snakes,"initial",mySnake))
   
         if result[1] in possible_moves:
           print(result)

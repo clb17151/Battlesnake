@@ -50,7 +50,7 @@ def findClosestFood(food: List, head: Dict[str,int]):
       smallestDistance = newDistance
       closestFood = f
       
-  return closestFood
+  return closestFood,smallestDistance
 
 def bfsForFood(foodCoOrd: Dict[str,int], head: Dict[str,int],possible_moves:List[str]):
   queue = [[head]]

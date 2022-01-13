@@ -4,6 +4,7 @@ import copy
 gameBoard = []
 height = 0
 width = 0
+foodLocation = []
 
 def initialiseBoard(boardWidth: int, boardHeight: int):
   global height,width
@@ -16,7 +17,7 @@ def initialiseBoard(boardWidth: int, boardHeight: int):
 
 
 def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
-  global gameBoard
+  global gameBoard,foodLocation
   
   for snake in snakes:
       headx = (snake["head"]["x"]) 
@@ -30,6 +31,7 @@ def fillGameBoard(snakes: List[Dict],food: List[Dict],boardHeight: int):
               if snake["body"][-1]["x"] == bodyPiece["x"] and snake["body"][-1]["y"] == bodyPiece["y"]:
                 gameBoard[bodyy][bodyx] = "st"
   for f in food:
+    foodLocation.append(f)
     foodx = f["x"]
     foody = (boardHeight - 1) - f["y"]
     gameBoard[foody][foodx] = "f"
@@ -38,19 +40,19 @@ def getNumberOfFreeSquares(board:List[str],xcoOrd,ycoOrd):
   freeSquares = 0
   length = len(board) - 1
   if ycoOrd != length:
-    if board[(length - ycoOrd) -1 ][xcoOrd] == "x" or board[ycoOrd + 1][xcoOrd] == "f":
+    if board[(length - ycoOrd) -1 ][xcoOrd] == "x" or board[(length - ycoOrd) -1][xcoOrd] == "f":
       freeSquares += 1
 
   if ycoOrd != 0:
-    if board[(length - ycoOrd) + 1][xcoOrd] == "x" or board[ycoOrd - 1][xcoOrd] == "f":
+    if board[(length - ycoOrd) + 1][xcoOrd] == "x" or board[(length - ycoOrd) + 1][xcoOrd] == "f":
       freeSquares += 1 
 
   if xcoOrd != length:
-    if board[length - ycoOrd][xcoOrd + 1] == "x" or board[ycoOrd][xcoOrd+1] == "f":
+    if board[length - ycoOrd][xcoOrd + 1] == "x" or board[length - ycoOrd][xcoOrd + 1] == "f":
       freeSquares += 1
 
   if xcoOrd != 0:
-    if board[(length - ycoOrd)][xcoOrd-1] == "x" or board[ycoOrd][xcoOrd-1] == "f":
+    if board[(length - ycoOrd)][xcoOrd-1] == "x" or board[length - ycoOrd][xcoOrd-1] == "f":
       freeSquares += 1  
 
   return freeSquares
@@ -166,49 +168,58 @@ def floodFill(board:List[str],xcord:int,ycord,snake:List[Dict]):
   queue = []
   if ycord != (length - 1) :
     if getNumberOfFreeSquares(board,xcord,ycord) > 0:
-      queue.append([ycord+1,xcord])
+      if(board[((length - 1)-ycord)-1][xcord] == 'x' or board[((length - 1) - ycord) - 1][xcord] == 'f'):
+        queue.append([ycord+1,xcord])
 
   if ycord != 0 :
     if getNumberOfFreeSquares(board,xcord,ycord) > 0:
-      queue.append([ycord-1,xcord])
+      if(board[((length - 1) - ycord)+1][xcord] == 'x' or board[((length - 1) - ycord)+1][xcord] == 'f'):
+        queue.append([ycord-1,xcord])
 
   if xcord != (length - 1):
     if getNumberOfFreeSquares(board,xcord,ycord) > 0:
-      queue.append([ycord,xcord+1])
+      if(board[((length - 1) - ycord)][xcord+1] == 'x' or board[((length - 1) - ycord)][xcord+1] == 'f'):
+        queue.append([ycord,xcord+1])
 
   if xcord != 0 :
     if getNumberOfFreeSquares(board,xcord,ycord) > 0:
-      queue.append([ycord,xcord-1])
+      if(board[((length - 1) - ycord)][xcord-1] == 'x' or board[((length - 1) - ycord)][xcord-1] == 'f'):
+        queue.append([ycord,xcord-1])
 
   visited = []
   while queue:
     n = queue.pop()
     if n not in visited:
       visited.append(n)
-
       if board[((length-n[0]) - 1)][n[1]] == "x" or board[((length-n[0]) - 1)][n[1]] == "f":  
         area += 1
-
+      
       #Deals with adding Right square
-      if n[1] != (length - 1) and not [(length - 1 - n[0]),n[1]+1] in visited :
+      if n[1] != (length - 1) and  (board[length - 1 - n[0]][n[1]+1] == 'x' or board[length - 1 - n[0]][n[1]+1] == 'f') :
         queue.append([n[0],n[1] + 1])
 
-      #Deals with adding Left square
-      if n[1] != 0 and not [(length - 1 - n[0]),n[1]-1] in visited :
-        queue.append([n[0],n[1] - 1])
-
       #Deals with adding Up square
-      if n[0] != (length - 1) and not [(length - 1 - n[0]) - 1,n[1]] in visited :
+      if n[0] != (length - 1) and  (board[length - 1 - n[0] - 1][n[1]] == 'x' or board[length - 1 - n[0] - 1 ][n[1]] == 'f'):
         queue.append([n[0] + 1,n[1]])
 
       #Deals with adding Down square
-      if n[0] != 0 and not [(length - 1 - n[0]) + 1,n[1]] in visited:
+      if n[0] != 0 and (board[(length - 1 - n[0]) + 1][n[1]] == 'x' or board[(length - 1 - n[0]) + 1 ][n[1]] == 'f'):
         queue.append([n[0] - 1,n[1]])
+      
+
+      #Deals with adding Left square
+      if n[1] != 0 and  (board[length - 1 - n[0]][n[1]-1] == "x" or board[length - 1 - n[0]][n[1]-1] == 'f') :
+        queue.append([n[0],n[1] - 1])
+
   return area
 
 def resetGameBoard():
   global gameBoard
   gameBoard = []
+
+def resetFood():
+  global foodLocation
+  foodLocation = []
 
 def getBoard():
   return gameBoard
@@ -220,6 +231,10 @@ def getHeight():
 def getWidth():
   global width
   return width
+
+def getFood():
+  global foodLocation
+  return foodLocation
 
 def setBoard(board:List[str]):
   global gameBoard

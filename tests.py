@@ -185,32 +185,39 @@ class AvoidHeadCollisions(unittest.TestCase):
         # Assert
         self.assertEqual(["down","left","right"], result_moves)
 
-    def test_flood(self):
-  
+
+    def test_eval(self):
+   
         # Arrange
         board = [
-        ['x', 'x', 'x', 'x', 'x', 'x', 'x'], 
-        ['x', 'x', 'x', 'x', 'x', 'x', 'x'],
-        ['x', 'x', 'x', 'x', 'x', 'x', 'x'],
-        ['x', 'x', 'st', 'sb', 'x', 'x', 'x'], 
-        ['x', 'x', 'sb', 'sb', 'x', 'x', 'x'], 
-        ['x', 'x', 'sh', 'x', 'sb', 'sb', 'st'],
-        ['x', 'x', 'x', 'sh', 'sb', 'sb', 'sb']]
+        ['x',  'x', 'x',  'x', 'x',  'x', 'x', 'x', 'x', 'x', 'x'], 
+        ['x', 'sb', 'sb', 'sb', 'sb', 'sb', 'sb', 'sb', 'sh', 'sb', 'x'],
+        ['x', 'sh',  'x',  'x',  'x',  'x',  'x',  'sb', 'x', 'sb', 'x'],
+        ['x',  'x',  'x',  'x',  'x',  'x',  'x',  'sb', 'x', 'sb', 'x'], 
+        ['x',  'x',  'x',  'x',  'x',  'x',  'st', 'sb', 'x', 'sb', 'x'], 
+        ['f',  'x',  'x',  'x',  'x',  'x',  'x',  'x',  'st', 'sb', 'x'],
+        ['sb', 'sb', 'st', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['sb', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['sb', 'sb', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['x', 'sb', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['x', 'sh', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
         
-        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 3, 'y': 0}, {'x': 4, 'y': 0}, {'x': 4, 'y': 1}, {'x': 5, 'y': 1}, {'x': 5, 'y': 0}, {'x': 6, 'y': 0}, {'x': 6, 'y': 1}], 'head': {'x': 3, 'y': 0}, 'length': 5, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 67, 'body': [{'x': 1, 'y': 0}, {'x': 1, 'y': 1}, {'x': 1, 'y': 2}, {'x': 0, 'y': 2}, {'x': 0, 'y': 3}, {'x': 0, 'y': 4}, {'x': 1, 'y': 4}, {'x': 2, 'y': 4}], 'head': {'x': 1, 'y': 0}, 'length': 8, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
 
-        snakes = [ {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 3, 'y': 0}, {'x': 4, 'y': 0}, {'x': 4, 'y': 1}, {'x': 5, 'y': 1}, {'x': 5, 'y': 0}, {'x': 6, 'y': 0}, {'x': 6, 'y': 1}], 'head': {'x': 3, 'y': 0}, 'length': 5, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}, {'id': 'gs_VkYymmVCfGFSMMj3DSg7wYVV', 'name': 'Barry', 'latency': '59', 'health': 93, 'body': [{'x': 2, 'y': 1}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 3, 'y': 3},{'x': 2, 'y': 3}], 'head': {'x': 2, 'y': 1}, 'length': 5, 'shout': '', 'squad': '', 'customizations': {'color': '#fb6900', 'head': 'default', 'tail': 'default'}}]
+        snakes = [{'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 67, 'body': [{'x': 1, 'y': 0}, {'x': 1, 'y': 1}, {'x': 1, 'y': 2}, {'x': 0, 'y': 2}, {'x': 0, 'y': 3}, {'x': 0, 'y': 4}, {'x': 1, 'y': 4}], 'head': {'x': 1, 'y': 0}, 'length': 8, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}, {'id': 'gs_dVkqFCCj4wv7StXwJP7TFdBG', 'name': 'Barry', 'latency': '60', 'health': 95, 'body': [{'x': 1, 'y': 8}, {'x': 1, 'y': 9}, {'x': 2, 'y': 9}, {'x': 3, 'y': 9}, {'x': 4, 'y': 9}, {'x': 5, 'y': 9}, {'x': 6, 'y': 9}, {'x': 7, 'y': 9}, {'x': 7, 'y': 8}, {'x': 7, 'y': 7}, {'x': 7, 'y': 6}, {'x': 6, 'y': 6}, {'x': 5, 'y': 6}], 'head': {'x': 1, 'y': 8}, 'length': 13, 'shout': '', 'squad': '', 'customizations': {'color': '#fb6900', 'head': 'default', 'tail': 'default'}}, {'id': 'gs_VkYymmVCfGFSMMj3DSg7wYVV', 'name': 'Barry', 'latency': '59', 'health': 93, 'body': [{'x': 8, 'y': 9}, {'x': 9, 'y': 9}, {'x': 9, 'y': 8}, {'x': 9, 'y': 7}, {'x': 9, 'y': 6}, {'x': 9, 'y': 5}, {'x': 8, 'y': 5}], 'head': {'x': 8, 'y': 9}, 'length': 3, 'shout': '', 'squad': '', 'customizations': {'color': '#fb6900', 'head': 'default', 'tail': 'default'}}]
 
-        Board.initialiseBoard(7, 7)
-        Board.fillGameBoard(snakes, [], 7)
+  
+        food = [{"x":0,"y":5}]
+        Board.initialiseBoard(11, 11)
+        Board.fillGameBoard(snakes, food, 11)
 
         pinf = float('inf')
         ninf = float('-inf')
-        result = (bestReply.BRS(ninf,pinf,3,"Max",board,snakes,"initial",my_snake))
+        result = (bestReply.BRS(ninf,pinf,4,"Max",board,snakes,"initial",my_snake))
 
-
+        
         # Assert
-        self.assertEqual((19,'left'),result)
+        self.assertEqual(0,result)
 
 if __name__ == "__main__":
     unittest.main()
