@@ -16,6 +16,111 @@ import moveLogic,Board,bestReply
 
 
 class AvoidHeadCollisions(unittest.TestCase):
+
+    def test_avoid_left_wall(self):
+        # Arrange
+        board = [
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'st', 'sb', 'sh', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['sh', 'sb', 'st', 'x', 'x', 'f', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'sh', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'st', 'sb', 'sb', 'x', 'x', 'x', 'x', 'f'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 0, 'y': 5}, {'x': 1, 'y': 5}, {'x': 2, 'y': 5}], 'head': {'x': 0, 'y': 5}, 'length': 3, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+      
+        possible_moves = ["up", "down", "left", "right"]
+
+        # Act
+        result_moves = moveLogic.avoid_walls(my_snake["head"],len(board),len(board),possible_moves)
+
+        # Assert
+        self.assertEqual(["up","down","right"], result_moves)
+
+    def test_avoid_right_wall(self):
+        # Arrange
+        board = [
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'st', 'sb', 'sh', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'f', 'x', 'x', 'st', 'sb', 'sh'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'sh', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'st', 'sb', 'sb', 'x', 'x', 'x', 'x', 'f'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 10, 'y': 5}, {'x': 9, 'y': 5}, {'x': 8, 'y': 5}], 'head': {'x': 10, 'y': 5}, 'length': 3, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+      
+        possible_moves = ["up", "down", "left", "right"]
+
+        # Act
+        result_moves = moveLogic.avoid_walls(my_snake["head"],len(board),len(board),possible_moves)
+
+        # Assert
+        self.assertEqual(["up","down","left"], result_moves)
+
+    def test_avoid_down_wall(self):
+        # Arrange
+        board = [
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'st', 'sb', 'sh', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'f', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'sh', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'st', 'x', 'st', 'sb', 'sb', 'x', 'x', 'x', 'x', 'f'],
+          ['x', 'sb', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'sh', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 1, 'y': 0}, {'x': 1, 'y': 1}, {'x': 1, 'y': 2}], 'head': {'x': 1, 'y': 0}, 'length': 3, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+      
+        possible_moves = ["up", "down", "left", "right"]
+
+        # Act
+        result_moves = moveLogic.avoid_walls(my_snake["head"],len(board),len(board),possible_moves)
+
+        # Assert
+        self.assertEqual(["up","left","right"], result_moves)
+
+    def test_avoid_top_and_right_wall(self):
+        # Arrange
+        board = [
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'sh'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'sb'],
+          ['x', 'x', 'x', 'x', 'st', 'sb', 'sh', 'x', 'x', 'x', 'st'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'], 
+          ['x', 'x', 'x', 'x', 'x', 'f', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'sh', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'st', 'sb', 'sb', 'x', 'x', 'x', 'x', 'f'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+          ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 95, 'body': [{'x': 10, 'y': 10}, {'x': 9, 'y': 9}, {'x': 8, 'y': 8}], 'head': {'x': 10, 'y': 10}, 'length': 3, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+      
+        possible_moves = ["up", "down", "left", "right"]
+
+        # Act
+        result_moves = moveLogic.avoid_walls(my_snake["head"],len(board),len(board),possible_moves)
+
+        # Assert
+        self.assertEqual(["down","left"], result_moves)
+
     def test_head_collision_right(self):
    
         # Arrange
@@ -185,6 +290,8 @@ class AvoidHeadCollisions(unittest.TestCase):
         # Assert
         self.assertEqual(["down","left","right"], result_moves)
 
+      
+
 
     def test_eval(self):
    
@@ -208,6 +315,72 @@ class AvoidHeadCollisions(unittest.TestCase):
 
   
         food = [{"x":0,"y":5}]
+        Board.initialiseBoard(11, 11)
+        Board.fillGameBoard(snakes, food, 11)
+
+        pinf = float('inf')
+        ninf = float('-inf')
+        result = (bestReply.BRS(ninf,pinf,4,"Max",board,snakes,"initial",my_snake))
+
+        
+        # Assert
+        self.assertEqual("right",result[1])
+
+    def test_eval2(self):
+   
+        # Arrange
+        board = [
+        ['x',  'x', 'x',  'x', 'x',  'sb', 'sb', 'sb', 'sb', 'sb', 'sh'], 
+        ['x', 'x', 'x', 'x', 'x', 'sh', 'x', 'sb', 'sb', 'sb', 'sb'],
+        ['x', 'x',  'x',  'x',  'x',  'sb',  'sb',  'sb', 'sb', 'sb', 'sb'],
+        ['x',  'x',  'x',  'f',  'x',  'sb',  'x',  'x', 'x', 'x', 'sb'], 
+        ['x',  'x',  'x',  'x',  'x',  'sb',  'x', 'x', 'x', 'x', 'sb'], 
+        ['x',  'x',  'x',  'x',  'x',  'sb',  'sb',  'x',  'sb', 'st', 'sb'],
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'sb', 'sb', 'sb', 'sb'],
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'st'],
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 67, 'body': [{'x': 5, 'y': 9}, {'x': 5, 'y': 10}, {'x': 6, 'y': 10}, {'x': 7, 'y': 10}, {'x': 7, 'y': 9}, {'x': 7, 'y': 8}, {'x': 6, 'y': 8}, {'x': 5, 'y': 8}, {'x': 5, 'y': 7}, {'x': 5, 'y': 6}, {'x': 5, 'y': 5}, {'x': 6, 'y': 5}, {'x': 6, 'y': 4}, {'x': 7, 'y': 4}, {'x': 8, 'y': 4}, {'x': 8, 'y': 5}, {'x': 9, 'y': 5}], 'head': {'x': 5, 'y': 9}, 'length': 17, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+        snakes = [{'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 67, 'body': [{'x': 5, 'y': 9}, {'x': 5, 'y': 10}, {'x': 6, 'y': 10}, {'x': 7, 'y': 10}, {'x': 7, 'y': 9}, {'x': 7, 'y': 8}, {'x': 6, 'y': 8}, {'x': 5, 'y': 8}, {'x': 5, 'y': 7}, {'x': 5, 'y': 6}, {'x': 5, 'y': 5}, {'x': 6, 'y': 5}, {'x': 6, 'y': 4}, {'x': 7, 'y': 4}, {'x': 8, 'y': 4}, {'x': 8, 'y': 5}, {'x': 9, 'y': 5}], 'head': {'x': 5, 'y': 9}, 'length': 17, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}, {'id': 'gs_dVkqFCCj4wv7StXwJP7TFdBG', 'name': 'Barry', 'latency': '60', 'health': 95, 'body': [ {'x': 1, 'y': 9}, {'x': 9, 'y': 9}, {'x': 9, 'y': 10}, {'x': 8, 'y': 10}, {'x': 8, 'y': 9}, {'x': 8, 'y': 9}, {'x': 9, 'y': 9}, {'x': 10, 'y': 9}, {'x': 10, 'y': 7}, {'x': 10, 'y': 6}, {'x': 10, 'y': 5}, {'x': 10, 'y': 4}, {'x': 10, 'y': 3}], 'head': {'x': 9, 'y': 10}, 'length': 14, 'shout': '', 'squad': '', 'customizations': {'color': '#fb6900', 'head': 'default', 'tail': 'default'}}]
+
+  
+        food = [{"x":3,"y":7}]
+        Board.initialiseBoard(11, 11)
+        Board.fillGameBoard(snakes, food, 11)
+
+        pinf = float('inf')
+        ninf = float('-inf')
+        result = (bestReply.BRS(ninf,pinf,4,"Max",board,snakes,"initial",my_snake))
+
+        
+        # Assert
+        self.assertEqual("left",result[1])
+
+    def test_eval3(self):
+   
+        # Arrange
+        board = [
+        ['x',  'x', 'x',  'x', 'x',  'x', 'x', 'x', 'x', 'sb', 'sb'], 
+        ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'sb', 'sb'],
+        ['x', 'x',  'x',  'x',  'x',  'x',  'sb',  'sb', 'sb', 'sb', 'sb'],
+        ['x',  'x',  'x',  'x',  'x',  'x',  'sb',  'x', 'x', 'x', 'sb'], 
+        ['st',  'x',  'x',  'x',  'x',  'x',  'sb', 'x', 'x', 'st', 'sb'], 
+        ['sb',  'x',  'x',  'x',  'x',  'x',  'sb',  'x',  'x', 'x', 'x'],
+        ['sb', 'sb', 'x', 'x', 'sb', 'sb', 'sb', 'x', 'x', 'x', 'x'],
+        ['x', 'sb', 'x', 'x', 'sb', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['sb', 'sb', 'sb', 'sb', 'sb', 'x', 'x', 'x', 'x', 'x', 'x'],
+        ['sb', 'x', 'sb', 'sb', 'sh', 'x', 'x', 'x', 'x', 'x', 'f'],
+        ['sb', 'sh', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']]
+        
+        my_snake = {'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 67, 'body': [{'x': 1, 'y': 0}, {'x': 0, 'y': 0}, {'x': 0, 'y': 1}, {'x': 0, 'y': 2}, {'x': 1, 'y': 2}, {'x': 1, 'y': 3}, {'x': 1, 'y': 4}, {'x': 0, 'y': 4}, {'x': 0, 'y': 5}, {'x': 0, 'y': 6},], 'head': {'x': 1, 'y': 0}, 'length': 10, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}
+
+        snakes = [{'id': 'gs_6cKMCg9r6jP77WV6bbjqrFfX', 'name': 'ekans v1', 'latency': '147', 'health': 67, 'body': [{'x': 1, 'y': 0}, {'x': 0, 'y': 0}, {'x': 0, 'y': 1}, {'x': 0, 'y': 2}, {'x': 1, 'y': 2}, {'x': 1, 'y': 3}, {'x': 1, 'y': 4}, {'x': 0, 'y': 4}, {'x': 0, 'y': 5}, {'x': 0, 'y': 6},], 'head': {'x': 1, 'y': 0}, 'length': 10, 'shout': '', 'squad': '', 'customizations': {'color': '#800080', 'head': 'safe', 'tail': 'small-rattle'}}, {'id': 'gs_dVkqFCCj4wv7StXwJP7TFdBG', 'name': 'Barry', 'latency': '60', 'health': 95, 'body': [ {'x': 4, 'y':1}, {'x': 3, 'y': 1}, {'x': 2, 'y': 1}, {'x': 2, 'y': 2}, {'x': 3, 'y': 2}, {'x': 4, 'y': 2}, {'x': 4, 'y': 3}, {'x': 4, 'y': 4}, {'x': 5, 'y': 4}, {'x': 6, 'y': 4}, {'x': 6, 'y': 5}, {'x': 6, 'y': 6}, {'x': 6, 'y': 7}, {'x': 6, 'y': 8}, {'x': 7, 'y': 8}, {'x': 8, 'y': 8}, {'x': 9, 'y': 8}, {'x': 9, 'y': 9}, {'x': 9, 'y': 10}, {'x': 10, 'y': 10}, {'x': 10, 'y': 9}, {'x': 10, 'y': 8}, {'x': 10, 'y': 7}, {'x': 10, 'y': 6}, {'x': 9, 'y': 6}], 'head': {'x': 4, 'y': 1}, 'length': 14, 'shout': '', 'squad': '', 'customizations': {'color': '#fb6900', 'head': 'default', 'tail': 'default'}}]
+
+  
+        food = [{"x":3,"y":7}]
         Board.initialiseBoard(11, 11)
         Board.fillGameBoard(snakes, food, 11)
 

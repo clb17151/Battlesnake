@@ -1,4 +1,4 @@
-import Board,moveLogic,copy,random,RouteFinder
+import Board,moveLogic,copy,random,RouteFinder,time
 from typing import List, Dict
 
 
@@ -7,48 +7,40 @@ def BRS(alpha:int, beta:int, depth: int, turn:str,board:List[str],snakes: List[D
   enemies.pop(0)
   newMove = prevMove
   bestMove = ""
-  deadSnakes = []
 
   if depth <= 0:
     score = evaluate(board,mySnake,snakes)
+
     return score,prevMove
   if turn == "Max":
     moves = generateMoves(board,mySnake,snakes,turn)
-    if moves == []:
-      score = evaluate(board,mySnake,snakes)
-      return score,prevMove
-    turn = "Min"
 
+    if moves == []:     
+      return -10000,prevMove
+    turn = "Min"
     for move in moves:
 
       newBoard = board[:]
       copyOfMe = copy.deepcopy(mySnake)
       newBoard,updatedSnake = Board.doMove(move,copyOfMe,newBoard,0)
-
       snakes.pop(0)
       snakes.insert(0,updatedSnake)
-      newBeta = beta * -1
-      newAlpha = alpha * -1
-
-      v,newMove = BRS(newBeta,newAlpha,depth - 1, turn,newBoard,snakes,move,updatedSnake)
+      v,newMove = BRS(-alpha,-beta,depth - 1, turn,newBoard,snakes,move,updatedSnake)
       v = -v
       if v >= beta:
         return v,newMove
       if v > alpha:
         alpha = v
         bestMove = move
-      
-
   else:
     moves = []
     for e in enemies:
       newMoves = [generateMoves(board,e,snakes,turn)]
-      if newMoves == []:
-        deadSnakes += e
+      if newMoves == [[]]:
+        return -10000,prevMove
       else:
         moves += newMoves
     turn = "Max"
-
     index = 0
     for moveSet in moves:
       for move in moveSet:
@@ -57,64 +49,52 @@ def BRS(alpha:int, beta:int, depth: int, turn:str,board:List[str],snakes: List[D
         newSnakes = snakes[:]
         currentSnake = copy.deepcopy(enemies[index])
         newBoard,updatedSnake = Board.doMove(move,currentSnake,newBoard,index)
-
         if not updatedSnake == []:
           newSnakes.pop(index+1)
           newSnakes.insert(index+1,updatedSnake)
-    
-        newBeta = beta * -1
-        newAlpha = alpha * -1
-        v,newMove = BRS(newBeta,newAlpha,depth-1, turn,newBoard,newSnakes,move,mySnake)
-
+        v,newMove = BRS(-alpha,-beta,depth - 1, turn,newBoard,snakes,move,mySnake)
         v = -v
         if v >= beta:
           return v,newMove
         if v > alpha:
           alpha = v
           bestMove = move
-        
       index += 1
   return alpha,bestMove
 
  
-
-  
-
 def evaluate(board: List[str],snake: List[Dict],allSnakes: List[Dict]):
   totalScore = 0
   floodfillScore = Board.floodFill(board,snake["head"]["x"],snake["head"]["y"],snake)
   myLength = len(snake["body"])
+
   if floodfillScore < myLength:
-    return 1
+    return floodfillScore
   else:
     totalScore += floodfillScore
   
   distToFood = RouteFinder.findClosestFood(Board.getFood(),snake['head'])[1]
-
   totalScore += len(board) - distToFood
-
   totalScore += myLength
     
-  floodfillScore = Board.floodFill(board,snake["head"]["x"],snake["head"]["y"],snake)
-
-  if floodfillScore < myLength:
-    return float("-inf")
-  else:
-    totalScore += floodfillScore
-
   if snake["head"]["x"] == 0 or snake["head"]["x"] == len(board)-1:
-    totalScore -5
+    totalScore -30
   if snake["head"]["y"] == 0 or snake["head"]["y"] == len(board)-1:
-    totalScore -5
+    totalScore -30
 
   if snake["head"]["x"] == 1 or snake["head"]["x"] == len(board)-2:
-    totalScore -2
+    totalScore -15
   if snake["head"]["y"] == 1 or snake["head"]["y"] == len(board)-2:
-    totalScore -2
+    totalScore -15
 
   if snake["head"]["x"] > len(board)/3 or snake["head"]["x"] < len(board)/3:
     totalScore +10
   if snake["head"]["y"] == len(board)/3 or snake["head"]["y"] < len(board)/3:
+    totalScore +10
+
+  if snake["head"]["x"] == 3 or snake["head"]["x"] == 4:
+    totalScore +10
+  if snake["head"]["y"] == 3 or snake["head"]["y"] == 4:
     totalScore +10
 
   totalScore += Board.getNumberOfFreeSquares(board,snake["head"]["x"],snake["head"]["y"])
@@ -125,14 +105,18 @@ def evaluate(board: List[str],snake: List[Dict],allSnakes: List[Dict]):
         totalScore += 10
       else:
         totalScore -= 5
+      currentfloodfillScore = Board.floodFill(board,s["head"]["x"],s["head"]["y"],s)
+      if currentfloodfillScore < len(s['body']):
+        totalScore += 50
+      else:
+        totalScore += len(board)*len(board) - currentfloodfillScore
 
-    freeSquares = Board.getNumberOfFreeSquares(board,s['head']['x'],s['head']['y'])
-    totalScore += (freeSquares - 4)
 
-  if snake['health'] > 90:
+  freeSquares = Board.getNumberOfFreeSquares(board,s['head']['x'],s['head']['y'])
+  totalScore += (freeSquares - 4)
+
+  if snake['health'] > 70:
     totalScore += 15
-  if snake['health'] > 75:
-    totalScore += 5
   if snake['health'] < 50:
     totalScore -= 20
   

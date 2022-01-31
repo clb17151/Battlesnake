@@ -115,8 +115,8 @@ def doMove(move:str,snake:List[Dict],board:List[str],index:int):
       if not consumedFood:
         gameBoard[((height  - tail["y"]) - 1)][tail["x"]] = "x"
         gameBoard[(height  - secondLast["y"]) - 1][secondLast["x"]] = "st"
-        gameBoard[(height - heady) - 1 ][headx] = "sb"
-        gameBoard[(height - heady) - 2 ][headx] = "sh"
+      gameBoard[(height - heady) - 1 ][headx] = "sb"
+      gameBoard[(height - heady) - 2 ][headx] = "sh"
       updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
 
 
@@ -127,8 +127,8 @@ def doMove(move:str,snake:List[Dict],board:List[str],index:int):
       if not consumedFood and not heady == 0:
         gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
         gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
-        gameBoard[(height - heady) - 1][headx] = "sb"
-        gameBoard[(height - heady)][headx] = "sh"
+      gameBoard[(height - heady) - 1][headx] = "sb"
+      gameBoard[(height - heady)][headx] = "sh"
       updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
 
 
@@ -140,8 +140,8 @@ def doMove(move:str,snake:List[Dict],board:List[str],index:int):
     if not consumedFood:
       gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
       gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
-      gameBoard[((height - heady) -1)][headx-1] = "sh"
-      gameBoard[((height - heady) -1)][headx] = "sb"
+    gameBoard[((height - heady) -1)][headx-1] = "sh"
+    gameBoard[((height - heady) -1)][headx] = "sb"
     updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
 
 
@@ -153,8 +153,8 @@ def doMove(move:str,snake:List[Dict],board:List[str],index:int):
       if not consumedFood:
         gameBoard[(height  - tail["y"])-1][tail["x"]] = "x"
         gameBoard[(height  - secondLast["y"])-1][secondLast["x"]] = "st"
-        gameBoard[((height - heady) -1)][headx+1] = "sh"
-        gameBoard[((height - heady) -1)][headx] = "sb"
+      gameBoard[((height - heady) -1)][headx+1] = "sh"
+      gameBoard[((height - heady) -1)][headx] = "sb"
       updatedSnake = updateSnakes(gameBoard,snake,move,index,consumedFood)
 
   return gameBoard,updatedSnake

@@ -1,4 +1,4 @@
-import random, RouteFinder, Board,moveLogic,bestReply
+import random, RouteFinder, Board,moveLogic,bestReply,time
 from typing import Dict
 
 
@@ -33,7 +33,6 @@ def choose_move(data: dict) -> str:
     Board.fillGameBoard(snakes, food, height)
 
 
-    food = RouteFinder.findClosestFood(food, my_head)[0]
     possible_moves = ["up", "down", "left", "right"]
     possible_moves = moveLogic.avoid_other_snakes(my_head, snakes, possible_moves)
     possible_moves = moveLogic.avoid_walls(my_head, width, height, possible_moves)
@@ -54,10 +53,9 @@ def choose_move(data: dict) -> str:
     move = random.choice(possible_moves)
 
 
-    if data['turn'] > 5:
+    if data['turn'] > 3:
       if len (possible_moves) > 1:
-        result = (bestReply.BRS(ninf,pinf,2,"Max",boardCopy,snakes,"initial",mySnake))
-  
+        result = (bestReply.BRS(ninf,pinf,6,"Max",boardCopy,snakes,"initial",mySnake))
         if result[1] in possible_moves:
           print(result)
           move = result[1]
@@ -66,14 +64,7 @@ def choose_move(data: dict) -> str:
           print(result)
           print(possible_moves)
           move = random.choice(possible_moves)
-
-    if data["you"]["health"] < 25:
-      path = RouteFinder.bfsForFood(food, my_head, possible_moves,boardCopy)
-      if path != []:
-        move = getMove(my_head, path[1])
-      if (not move in possible_moves):
-        move = random.choice(possible_moves)
-        
+       
 
     print(
         f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}"

@@ -68,29 +68,30 @@ def end():
     f = open("gameHistory.txt", "a")
     f.write("\n")
     
-    finalsnake = data["board"]["snakes"][0]
-    
-    if finalsnake == []:
+    if data["board"]["snakes"] == []:    
       f.write(f"Tie")
       f.write("\n")
       f.write(f"{data['turn']}")
       f.write("\n")
       f.write(f"{data['game']['id']} ")
-    else:
-      if finalsnake['id'] == data['you']['id'] :
+      f.write("\n")
+      f.close()
+      return "ok"
+
+    finalsnake = data["board"]["snakes"][0]
+    if finalsnake['id'] == data['you']['id'] :
         f.write(f"Win")
         f.write("\n")
         f.write(f"{data['turn']}")
         f.write("\n")
         f.write(f"{data['game']['id']} ")
-      else:
+    else:
         f.write(f"Loss")
         f.write("\n")
         f.write(f"{data['turn']}")
         f.write("\n")
         f.write(f"{data['game']['id']} ")
     f.write("\n")
-    
     f.close()
     return "ok"
 

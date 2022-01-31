@@ -55,8 +55,3 @@ def evaluate(board: List[str],snakes: List[Dict]):
   for s in snakes:
     floodfillScore = Board.floodFill(board,s["head"]["x"],s["head"]["y"],s)
   return [5,5]
-
-
-
-
-
